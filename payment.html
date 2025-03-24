@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <title>Payment</title>
+  </head>
+  <body>
+    <nav>
+      <div class="nav__logo">
+        <img src="assets/logo.png" alt="logo" />
+        <span>Breathing Room PH</span>
+      </div>
+      <ul class="nav__links">
+        <li class="link"><a href="index.html">Home</a></li>
+        <li class="link"><a href="classes.html">Classes</a></li>
+        <li class="link"><a href="membership.html">Membership</a></li>
+        <li class="link"><a href="index.html#stories">About</a></li>
+        <li class="link"><a href="index.html#posts">Blog</a></li>
+        <li class="link"><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav__profile">
+        <a href="login.html">
+          <i class="ri-user-line"></i>
+        </a>
+      </div>
+    </nav>  
+
+    <!-- Payment Section -->
+    <div class="payment-container">
+        <!-- Class Summary Section -->
+        <div class="class-summary">
+            <h3>Class Summary</h3>
+            <p><strong>Class:</strong> Yoga Basics</p>
+            <p><strong>Instructor:</strong> Sarah Lee</p>
+            <p><strong>Date:</strong> April 10, 2024</p>
+            <p><strong>Time:</strong> 10:00 AM - 11:00 AM</p>
+            <p><strong>Price:</strong> $20</p>
+            <hr>
+            <p><strong>Subtotal:</strong> $20</p>
+            <p><strong>Total:</strong> <span class="total-price">$21.00</span></p>
+        </div>
+
+        <!-- Payment Box -->
+        <div class="payment-box">
+          <div class="payment-methods">
+            <button class="pay-method apple-pay">
+                <img src="assets/apple-logo.png" alt="Apple Pay" width="24">Pay
+            </button>
+            <button class="pay-method google-pay">
+                <img src="assets/google-logo.png" alt="Google Pay" width="24"> Pay
+            </button>
+        </div>
+            
+            <h3>Bank Card</h3>
+            <form>
+                <input type="text" placeholder="Card Number*" required>
+                <input type="text" placeholder="Cardholder" required>
+                <div class="card-details">
+                    <input type="text" placeholder="MM/YY*" required>
+                    <input type="text" placeholder="CVV*" required>
+                </div>
+                <label class="save-card">
+                    <input type="checkbox"> Save card details for future use
+                </label>
+                <button type="button" class="pay-btn" onclick="processPayment()">Pay Now</button>
+                <button type="button" class="cancel-btn" onclick="cancelPayment()">Cancel Payment</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function processPayment() {
+            alert("Processing Payment...");
+            setTimeout(() => {
+                alert("Payment Successful!");
+                window.location.href = "confirmation.html";
+            }, 2000);
+        }
+
+        function cancelPayment() {
+            alert("Payment Canceled");
+            window.location.href = "classes.html"; // Redirect back to class page
+        }
+    </script>
+
+</body>
+</html>

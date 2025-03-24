@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <title>Confirm Payment</title>
+  </head>
+  <body>
+    <nav>
+      <div class="nav__logo">
+        <img src="assets/logo.png" alt="logo" />
+        <span>Breathing Room PH</span>
+      </div>
+      <ul class="nav__links">
+        <li class="link"><a href="index.html">Home</a></li>
+        <li class="link"><a href="classes.html">Classes</a></li>
+        <li class="link"><a href="membership.html">Membership</a></li>
+        <li class="link"><a href="index.html#stories">About</a></li>
+        <li class="link"><a href="index.html#posts">Blog</a></li>
+        <li class="link"><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav__profile">
+        <a href="login.html">
+          <i class="ri-user-line"></i>
+        </a>
+      </div>
+    </nav>  
+
+     <!-- Added this div to wrap the confirmation container -->
+  <div class="main-content">
+    <div class="confirmation-container">
+      <div class="checkmark-icon">
+          ✅ <!-- Replace with an image if needed -->
+      </div>
+
+      <h2 class="confirmation-title">Payment completed</h2>
+      
+      <div class="order-number">
+          <span>📄 Transaction ID <strong>#246258</strong></span>
+      </div>
+
+      <div class="transaction-details">
+          <div class="detail-item">
+              <span>Date</span>
+              <span>07/10/2024</span>
+          </div>
+          <div class="detail-item">
+              <span>Payment Method</span>
+              <span>Google Pay</span>
+          </div>
+          <div class="detail-item">
+              <span>Total</span>
+              <span>$480</span>
+          </div>
+          <div class="detail-item">
+              <span>Email</span>
+              <span>kc@cactus.co</span>
+          </div>
+      </div>
+
+      <button class="invoice-btn" onclick="window.location.href='index.html'">Back to Home</button>
+    </div>
+  </div>
+</body>

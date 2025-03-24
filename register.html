@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <title>Register</title>
+  </head>
+  <body>
+    <nav>
+      <div class="nav__logo">
+        <img src="assets/logo.png" alt="logo" />
+        <span>Breathing Room PH</span>
+      </div>
+      <ul class="nav__links">
+        <li class="link"><a href="index.html">Home</a></li>
+        <li class="link"><a href="classes.html">Classes</a></li>
+        <li class="link"><a href="membership.html">Membership</a></li>
+        <li class="link"><a href="index.html#stories">About</a></li>
+        <li class="link"><a href="index.html#posts">Blog</a></li>
+        <li class="link"><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav__profile">
+        <a href="login.html">
+          <i class="ri-user-line"></i>
+        </a>
+      </div>
+    </nav>     
+    <section class="register__section">
+      <div class="section__container header__container">
+        <div class="header__content">
+          <h1>Register</h1>
+          <h2>Join us and start your journey today.</h2>
+          <form action="dashboard.html" method="POST" class="register__form">
+            <div class="input__group">
+              <label for="first-name">First Name</label>
+              <input type="text" id="first-name" name="first-name" required />
+            </div>
+            <div class="input__group">
+              <label for="last-name">Last Name</label>
+              <input type="text" id="last-name" name="last-name" required />
+            </div>
+            <div class="input__group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" required />
+            </div>
+            <div class="input__group">
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" required />
+            </div>
+            <div class="input__group">
+              <label for="confirm-password">Confirm Password</label>
+              <input type="password" id="confirm-password" name="confirm-password" required />
+            </div>
+            <button type="submit" class="btn">Sign Up</button>
+            <p class="login__link">Already have an account? <a href="login.html">Login</a></p>
+          </form>
+        </div>
+        <div class="why__image">
+          <img src="assets/header.jpg" alt="header" />
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

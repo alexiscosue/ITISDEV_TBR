@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <title>Classes</title>
+  </head>
+  <body>
+    <nav>
+      <div class="nav__logo">
+        <img src="assets/logo.png" alt="logo" />
+        <span>Breathing Room PH</span>
+      </div>
+      <ul class="nav__links">
+        <li class="link"><a href="index.html">Home</a></li>
+        <li class="link"><a href="classes.html">Classes</a></li>
+        <li class="link"><a href="membership.html">Membership</a></li>
+        <li class="link"><a href="index.html#stories">About</a></li>
+        <li class="link"><a href="index.html#posts">Blog</a></li>
+        <li class="link"><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav__profile">
+        <a href="login.html">
+          <i class="ri-user-line"></i>
+        </a>
+      </div>
+    </nav>  
+
+    <!-- Hero Section -->
+    <section class="banner">
+      <div class="section__container banner__container2">
+        <div class="banner__card">
+          <h4>Classes</h4>
+          <p>Choose a plan that fits your lifestyle and start your wellness journey today.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Schedule Container -->
+    <main class="schedule-container">
+        <div class="schedule-header">
+            <button class="nav-arrow" id="prev-week">&lt;</button>
+            <h2 id="week-range">Sun 3/23 - Sat 3/29</h2>
+            <button class="nav-arrow" id="next-week">&gt;</button>
+        </div>
+
+        <div class="date-picker">
+            <div class="date" data-date="23">Sun <span>23</span></div>
+            <div class="date" data-date="24">Mon <span>24</span></div>
+            <div class="date active" data-date="25">Tue <span>25</span></div>
+            <div class="date" data-date="26">Wed <span>26</span></div>
+            <div class="date" data-date="27">Thu <span>27</span></div>
+            <div class="date" data-date="28">Fri <span>28</span></div>
+            <div class="date" data-date="29">Sat <span>29</span></div>
+        </div>
+
+        <div class="class-list">
+            <div class="class-card">
+                <div class="class-info">
+                    <h3>Ashtanga</h3>
+                    <p class="class-time"><i class="ri-time-line"></i> 6:30 AM - 7:30 AM</p>
+                    <p class="class-location"><i class="ri-map-pin-line"></i> Yoga Room</p>
+                    <p class="class-instructor"><i class="ri-user-line"></i> Ricci Salgado</p>
+                </div>
+                <button class="book-btn"><a href="payment.html">Book Now</a></button>
+            </div>
+
+            <div class="class-card">
+                <div class="class-info">
+                    <h3>Goddess Flow</h3>
+                    <p class="class-time"><i class="ri-time-line"></i> 10:00 AM - 11:00 AM</p>
+                    <p class="class-location"><i class="ri-map-pin-line"></i> Studio A</p>
+                    <p class="class-instructor"><i class="ri-user-line"></i> Jamie Ledesma</p>
+                </div>
+                <button class="book-btn"><a href="payment.html">Book Now</a></button>
+            </div>
+        </div>
+    </main>
+
+    <h2 class="section-title">OUR CLASSES</h2>
+
+    <div class="classes-container">
+        <div class="class-category">
+            <button class="accordion">ASHTANGA</button>
+            <div class="panel">
+                <p>Ashtanga is a specific sequence of poses linking breath and movement. It is a practice combining strength, flexibility, and stamina and may involve hands-on adjustments and guidance from the teacher. It is open to all levels of practitioners.</p>
+            </div>
+
+            <button class="accordion">DEEP STRETCH</button>
+            <div class="panel">
+                <p>Experience the bliss of total relaxation and flexibility enhancement in our Deep Stretch Yoga class. This session is thoughtfully designed to cater to all levels of yogis, whether you’re new to yoga or an experienced practitioner. We begin with a gentle warm-up to soothe the mind and prepare the body for the main event.</p>
+            </div>
+
+            <button class="accordion">LONG SLOW AND DEEP</button>
+            <div class="panel">
+                <p>A slow-paced class aimed at holding poses for an extended time to enhance flexibility and mindfulness.</p>
+            </div>
+            
+            <button class="accordion">POLE FITNESS</button>
+            <div class="panel">
+                <p>A strength-based workout incorporating dance and acrobatics on a pole.</p>
+            </div>
+        </div>
+
+        <div class="class-category">
+            <button class="accordion">BARRE</button>
+            <div class="panel">
+                <p>A ballet-inspired workout focusing on small, controlled movements and core stability.</p>
+            </div>
+
+            <button class="accordion">GODDESS FLOW</button>
+            <div class="panel">
+                <p>A feminine-inspired yoga class blending movement and breathwork.</p>
+            </div>
+
+            <button class="accordion">MOBILITY FLOW</button>
+            <div class="panel">
+                <p>A class designed to improve flexibility, joint mobility, and range of motion.</p>
+            </div>
+
+            <button class="accordion">POP PILATES</button>
+            <div class="panel">
+                <p>A fun, high-energy Pilates workout set to music.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer" id="contact">
+      <div class="section__container footer__container">
+        <div class="footer__col">
+          <div class="footer__logo"><a href="#">The Breathing Room PH</a></div>
+        </div>
+        <div class="footer__col">
+          <p>Unit 8D, Icon Plaza, 26th St, Taguig, Metro Manila</p>
+        </div>
+        <div class="footer__col">
+          <div class="footer__socials">
+            <a href="https://www.facebook.com/thebreathingroom.ph"><i class="ri-facebook-fill"></i></a>
+            <a href="https://www.instagram.com/breathingroom.ph/"><i class="ri-instagram-line"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="section__container footer__bar">
+        Copyright © 2025 The Breathing Room PH. All rights reserved.
+      </div>
+    </footer>
+
+    <script>
+      document.querySelectorAll(".accordion").forEach((accordion) => {
+    accordion.addEventListener("click", function () {
+        this.classList.toggle("active");
+        let panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+            panel.style.display = "none";
+        } else {
+            panel.style.display = "block";
+        }
+    });
+});
+
+    </script>
+</body>
+</html>
+
