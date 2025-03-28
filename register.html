@@ -27,9 +27,26 @@
         <li class="link"><a href="#contact">Contact</a></li>
       </ul>
       <div class="nav__profile">
-        <a href="login.html">
+        <!-- <a href="login.html">
+          <i class="ri-user-line"></i>
+        </a> -->
+        <a id="profileLink">
           <i class="ri-user-line"></i>
         </a>
+
+        <script>
+          // Check if user is logged in by pinging the server
+          fetch('/check-auth')
+            .then(res => res.json())
+            .then(data => {
+              const link = document.getElementById('profileLink');
+              if (data.loggedIn) {
+                link.href = '/user_profile';
+              } else {
+                link.href = '/login.html';
+              }
+            });
+        </script>
       </div>
     </nav>     
     <section class="register__section">
@@ -37,14 +54,15 @@
         <div class="header__content">
           <h1>Register</h1>
           <h2>Join us and start your journey today.</h2>
-          <form action="dashboard.html" method="POST" class="register__form">
+
+          <form action="/register" method="POST" class="register__form">
             <div class="input__group">
               <label for="first-name">First Name</label>
-              <input type="text" id="first-name" name="first-name" required />
+              <input type="text" id="first-name" name="firstname" required />
             </div>
             <div class="input__group">
               <label for="last-name">Last Name</label>
-              <input type="text" id="last-name" name="last-name" required />
+              <input type="text" id="last-name" name="lastname" required />
             </div>
             <div class="input__group">
               <label for="email">Email Address</label>
@@ -60,6 +78,7 @@
             </div>
             <button type="submit" class="btn">Sign Up</button>
             <p class="login__link">Already have an account? <a href="login.html">Login</a></p>
+
           </form>
         </div>
         <div class="why__image">

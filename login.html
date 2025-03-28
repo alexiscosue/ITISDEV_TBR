@@ -27,9 +27,26 @@
         <li class="link"><a href="#contact">Contact</a></li>
       </ul>
       <div class="nav__profile">
-        <a href="login.html">
+        <!-- <a href="login.html">
+          <i class="ri-user-line"></i>
+        </a> -->
+        <a id="profileLink">
           <i class="ri-user-line"></i>
         </a>
+
+        <script>
+          // Check if user is logged in by pinging the server
+          fetch('/check-auth')
+            .then(res => res.json())
+            .then(data => {
+              const link = document.getElementById('profileLink');
+              if (data.loggedIn) {
+                link.href = '/user_profile';
+              } else {
+                link.href = '/login.html';
+              }
+            });
+        </script>
       </div>
     </nav>   
     <section class="login__section">
@@ -37,15 +54,19 @@
             <div class="header__content">
               <h1>Login</h1>
               <h2>Your journey to Self begins here.</h2>
-              <form action="dashboard.html" method="POST" class="login__form">
+              <form action="/login" method="POST" class="login__form">
                 <div class="input__group">
                   <label for="email">Email Address</label>
                   <input type="email" id="email" name="email" required />
                 </div>
                 <div class="input__group">
                   <label for="password">Password</label>
-                  <input type="password" id="password" name="password" required />
+                  <div class="password-wrapper">
+                    <input type="password" id="password" name="password" required />
+                    <div id="password-error" class="error-bubble" style="display: none;"></div>
+                  </div>
                 </div>
+                             
                 <button type="submit" class="btn">Login</button>
                 <p class="register__link">Don't have an account? <a href="register.html">Sign up</a></p>
               </form>

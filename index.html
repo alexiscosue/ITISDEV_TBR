@@ -25,11 +25,31 @@
         <li class="link"><a href="index.html#stories">About</a></li>
         <li class="link"><a href="index.html#posts">Blog</a></li>
         <li class="link"><a href="#contact">Contact</a></li>
+
+
       </ul>
       <div class="nav__profile">
-        <a href="login.html">
+        <!-- <a href="login.html">
+          <i class="ri-user-line"></i>
+        </a> -->
+        <a id="profileLink">
           <i class="ri-user-line"></i>
         </a>
+        
+        <script>
+          // Check if user is logged in by pinging the server
+          fetch('/check-auth')
+            .then(res => res.json())
+            .then(data => {
+              const link = document.getElementById('profileLink');
+              if (data.loggedIn) {
+                link.href = '/user_profile';
+              } else {
+                link.href = '/login.html';
+              }
+            });
+        </script>
+        
       </div>
     </nav>    
     <header id="home">
