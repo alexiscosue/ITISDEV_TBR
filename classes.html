@@ -27,23 +27,24 @@
         <li class="link"><a href="#contact">Contact</a></li>
       </ul>
       <div class="nav__profile">
-        <!-- <a href="login.html">
-          <i class="ri-user-line"></i>
-        </a> -->
+        <span id="userGreeting" style="font-size: 1rem; color: var(--text-dark); margin-right: 10px;"></span>
         <a id="profileLink">
           <i class="ri-user-line"></i>
         </a>
-
+        
         <script>
           // Check if user is logged in by pinging the server
           fetch('/check-auth')
             .then(res => res.json())
             .then(data => {
               const link = document.getElementById('profileLink');
+              const greeting = document.getElementById('userGreeting');
               if (data.loggedIn) {
                 link.href = '/user_profile';
+                greeting.textContent = `Hi, ${data.user.firstname}`;
               } else {
                 link.href = '/login.html';
+                greeting.textContent = ``;
               }
             });
         </script>

@@ -1,112 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
-    <script src="https://unpkg.com/scrollreveal"></script>
-    <link rel="icon" type="image/png" href="assets/logo.png">
-    <title>Payment</title>
-  </head>
-  <body>
-    <nav>
-      <div class="nav__logo">
-        <img src="assets/logo.png" alt="logo" />
-        <span>Breathing Room PH</span>
-      </div>
-      <ul class="nav__links">
-        <li class="link"><a href="index.html">Home</a></li>
-        <li class="link"><a href="classes.html">Classes</a></li>
-        <li class="link"><a href="membership.html">Membership</a></li>
-        <li class="link"><a href="index.html#stories">About</a></li>
-        <li class="link"><a href="index.html#posts">Blog</a></li>
-        <li class="link"><a href="#contact">Contact</a></li>
-      </ul>
-      <div class="nav__profile">
-        <!-- <a href="login.html">
-          <i class="ri-user-line"></i>
-        </a> -->
-        <a id="profileLink">
-          <i class="ri-user-line"></i>
-        </a>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <title>Payment</title>
+</head>
+<body>
+  <nav>
+    <div class="nav__logo">
+      <img src="assets/logo.png" alt="logo" />
+      <span>Breathing Room PH</span>
+    </div>
+    <ul class="nav__links">
+      <li class="link"><a href="index.html">Home</a></li>
+      <li class="link"><a href="classes.html">Classes</a></li>
+      <li class="link"><a href="membership.html">Membership</a></li>
+      <li class="link"><a href="index.html#stories">About</a></li>
+      <li class="link"><a href="index.html#posts">Blog</a></li>
+      <li class="link"><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
 
-        <script>
-          // Check if user is logged in by pinging the server
-          fetch('/check-auth')
-            .then(res => res.json())
-            .then(data => {
-              const link = document.getElementById('profileLink');
-              if (data.loggedIn) {
-                link.href = '/user_profile';
-              } else {
-                link.href = '/login.html';
-              }
-            });
-        </script>
-      </div>
-    </nav>  
-
-    <!-- Payment Section -->
-    <div class="payment-container">
-        <!-- Class Summary Section -->
-        <div class="class-summary">
-            <h3>Class Summary</h3>
-            <p><strong>Class:</strong> Yoga Basics</p>
-            <p><strong>Instructor:</strong> Sarah Lee</p>
-            <p><strong>Date:</strong> April 10, 2024</p>
-            <p><strong>Time:</strong> 10:00 AM - 11:00 AM</p>
-            <p><strong>Price:</strong> $20</p>
-            <hr>
-            <p><strong>Subtotal:</strong> $20</p>
-            <p><strong>Total:</strong> <span class="total-price">$21.00</span></p>
-        </div>
-
-        <!-- Payment Box -->
-        <div class="payment-box">
-          <div class="payment-methods">
-            <button class="pay-method apple-pay">
-                <img src="assets/apple-logo.png" alt="Apple Pay" width="24">Pay
-            </button>
-            <button class="pay-method google-pay">
-                <img src="assets/google-logo.png" alt="Google Pay" width="24"> Pay
-            </button>
-        </div>
-            
-            <h3>Bank Card</h3>
-            <form>
-                <input type="text" placeholder="Card Number*" required>
-                <input type="text" placeholder="Cardholder" required>
-                <div class="card-details">
-                    <input type="text" placeholder="MM/YY*" required>
-                    <input type="text" placeholder="CVV*" required>
-                </div>
-                <label class="save-card">
-                    <input type="checkbox"> Save card details for future use
-                </label>
-                <button type="button" class="pay-btn" onclick="processPayment()">Pay Now</button>
-                <button type="button" class="cancel-btn" onclick="cancelPayment()">Cancel Payment</button>
-            </form>
-        </div>
+  <section class="payment-container">
+    <!-- Membership Summary Card -->
+    <div class="class-summary" id="summaryCard">
+      <h3>Membership Summary</h3>
+      <p><strong>Name:</strong> <span id="summaryName"></span></p>
+      <p><strong>Duration:</strong> <span id="summaryDuration"></span></p>
+      <p><strong>Description:</strong></p>
+      <div id="summaryDescription"></div>
+      <p class="subtotal">Subtotal: ₱<span id="summarySubtotal"></span></p>
+      <p>Total: <span class="total-price">₱<span id="summaryTotal"></span></span></p>
     </div>
 
-    <script>
-        function processPayment() {
-            alert("Processing Payment...");
-            setTimeout(() => {
-                alert("Payment Successful!");
-                window.location.href = "confirmation.html";
-            }, 2000);
-        }
+    <!-- Payment Form Card -->
+    <div class="payment-box">
+      <div class="payment-methods">
+        <button class="pay-method apple-pay">
+          <img src="assets/apple-logo.png" alt="Apple Pay" width="24">Pay
+        </button>
+        <button class="pay-method google-pay">
+            <img src="assets/google-logo.png" alt="Google Pay" width="24">Pay
+        </button>
+      </div>
+      <h3>Bank Card</h3>
+      <input type="text" placeholder="Card Number*" />
+      <input type="text" placeholder="Cardholder" />
+      <div class="card-details">
+        <input type="text" placeholder="MM/YY*" />
+        <input type="text" placeholder="CVV*" />
+      </div>
+      <label><input type="checkbox" /> Save card details for future use</label>
+      <button class="pay-btn">Pay Now</button>
+      <button class="cancel-btn" onclick="window.location.href='membership.html'">Cancel Payment</button>
+    </div>
+  </section>
 
-        function cancelPayment() {
-            alert("Payment Canceled");
-            window.location.href = "classes.html"; // Redirect back to class page
-        }
-    </script>
+  <script>
+    const membership = JSON.parse(localStorage.getItem('selectedMembership'));
 
+    if (membership) {
+      document.getElementById('summaryName').textContent = membership.name;
+      document.getElementById('summaryDuration').textContent = membership.duration;
+      document.getElementById('summarySubtotal').textContent = membership.price.toLocaleString();
+      document.getElementById('summaryTotal').textContent = membership.price.toLocaleString();
+      document.getElementById('summaryDescription').innerHTML =
+        membership.description.split('\\n').map(line => `<p>${line}</p>`).join('');
+    } else {
+      document.getElementById('summaryCard').innerHTML = '<p style="color:red">No membership selected.</p>';
+    }
+
+    document.querySelector('.pay-btn').addEventListener('click', () => {
+      if (!membership) return alert("No membership selected.");
+      fetch('/purchase-membership', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ membershipId: membership._id })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          localStorage.removeItem('selectedMembership');
+          window.location.href = '/user_profile';
+        } else {
+          alert('Something went wrong.');
+        }
+      });
+    });
+  </script>
 </body>
 </html>

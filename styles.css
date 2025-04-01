@@ -30,6 +30,7 @@
 }
 
 .section__subheader {
+  margin-top: 4rem;
   font-size: 1rem;
   font-weight: 300;
   text-align: center;
@@ -984,6 +985,13 @@ input[type="text"] {
 .membership {
   background-color: var(--extra-light);
 }
+
+.membership__container {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem; /* or whatever spacing between pricing categories you want */
+}
+
 
 .membership__grid {
   margin-top: 2rem;
