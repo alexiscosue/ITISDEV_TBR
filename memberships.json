@@ -1,0 +1,58 @@
+[
+  {
+    "name": "2 WEEK INTRO",
+    "category": "Regular Access",
+    "description": "Flexible Schedule: Book into multiple classes each day.\nUnlimited access to regular classes.\nSpecial discounts to specialty classes.\nPack activation expiration is 60 days from date of purchase.\nCancellation Policy: Cancel up to 12 hours before class to avoid any penalties.",
+    "price": 2500,
+    "duration": "14 consecutive days"
+  },
+  {
+    "name": "DAY PASS",
+    "category": "Regular Access",
+    "description": "Day Pass activation expiration is 60 days from date of purchase.\nCancellation Policy: Cancel up to 12 hours before class otherwise class is considered taken.",
+    "price": 850,
+    "duration": "1 day"
+  },
+  {
+    "name": "15 CLASS PACK",
+    "category": "Regular Access",
+    "description": "Access to any regular class on schedule.\nSpecial discounts to specialty classes.\nPass can be shared without limits.\nCancellation Policy: Cancel up to 12 hours before class otherwise class is considered taken.",
+    "price": 12500,
+    "duration": "180 consecutive days"
+  },
+  {
+    "name": "MEMBER-DAY PASS",
+    "category": "Pole Fitness",
+    "description": "Access to 1 class. Advanced booking only.\nFor members with active class pack only.\nNot applicable for use with class packs.\nWeekly pole fitness lessons on Saturdays, 4pm to 5:15pm.",
+    "price": 600,
+    "duration": "1 day"
+  },
+  {
+    "name": "NON-MEMBER DAY PASS SINGLE CLASS",
+    "category": "Pole Fitness",
+    "description": "Access to 1 class. Advanced booking only.\nWeekly pole fitness lessons on Saturdays, 4pm to 5:15pm.",
+    "price": 750,
+    "duration": "1 day"
+  },
+  {
+    "name": "6-CLASS MEMBER PACK",
+    "category": "Pole Fitness",
+    "description": "Advanced booking only.\nWeekly pole fitness lessons on Saturdays, 4pm to 5:15pm.\nPack can be shared without limits.",
+    "price": 2500,
+    "duration": "60 consecutive days"
+  },
+  {
+    "name": "MEMBER MEDITATION",
+    "category": "Guided Meditation",
+    "description": "Access to 1 class. By booking only.\nFor members with active class packs only.\nNot applicable for use with class packs.\nWeekly guided sessions on Thursdays at 6 pm and Fridays at 7 pm.",
+    "price": 500,
+    "duration": "weekly regular classes"
+  },
+  {
+    "name": "NON-MEMBER MEDITATION",
+    "category": "Guided Meditation",
+    "description": "Access to 1 class. By booking only.\nWeekly guided sessions on Thursdays at 6 pm and Fridays at 7 pm.",
+    "price": 650,
+    "duration": "weekly regular classes"
+  }
+]
