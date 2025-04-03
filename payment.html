@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <script src="https://unpkg.com/scrollreveal"></script>
   <link rel="icon" type="image/png" href="assets/logo.png">
   <title>Payment</title>
 </head>
+
 <body>
   <nav>
     <div class="nav__logo">
@@ -23,24 +26,24 @@
       <li class="link"><a href="#contact">Contact</a></li>
     </ul>
     <div class="nav__profile">
-        <span id="userGreeting" style="font-size: 1rem; color: var(--text-dark); margin-right: 10px;"></span>
-        <a id="profileLink"><i class="ri-user-line"></i></a>
-        <script>
-          fetch('/check-auth')
-            .then(res => res.json())
-            .then(data => {
-              const link = document.getElementById('profileLink');
-              const greeting = document.getElementById('userGreeting');
-              if (data.loggedIn) {
-                link.href = '/user_profile';
-                greeting.textContent = `Hi, ${data.user.firstname}`;
-              } else {
-                link.href = '/login.html';
-                greeting.textContent = ``;
-              }
-            });
-        </script>
-      </div>
+      <span id="userGreeting" style="font-size: 1rem; color: var(--text-dark); margin-right: 10px;"></span>
+      <a id="profileLink"><i class="ri-user-line"></i></a>
+      <script>
+        fetch('/check-auth')
+          .then(res => res.json())
+          .then(data => {
+            const link = document.getElementById('profileLink');
+            const greeting = document.getElementById('userGreeting');
+            if (data.loggedIn) {
+              link.href = '/user_profile';
+              greeting.textContent = `Hi, ${data.user.firstname}`;
+            } else {
+              link.href = '/login.html';
+              greeting.textContent = ``;
+            }
+          });
+      </script>
+    </div>
   </nav>
 
   <section class="payment-container">
@@ -59,11 +62,11 @@
     <div class="payment-box">
       <div class="payment-methods">
         <button class="pay-method apple-pay">
-            <img src="assets/apple-logo.png" alt="Apple Pay" width="24">Pay
-          </button>
-          <button class="pay-method google-pay">
-              <img src="assets/google-logo.png" alt="Google Pay" width="24">Pay
-          </button>
+          <img src="assets/apple-logo.png" alt="Apple Pay" width="24">Pay
+        </button>
+        <button class="pay-method google-pay">
+          <img src="assets/google-logo.png" alt="Google Pay" width="24">Pay
+        </button>
       </div>
       <h3>Bank Card</h3>
       <input type="text" placeholder="Card Number*" />
@@ -98,9 +101,9 @@
       summaryTitle.textContent = "Membership Summary";
       nameEl.textContent = membership.name;
       durationEl.textContent = membership.duration;
-      descEl.innerHTML = membership.description.split("\n").map(line => `<p>${line}</p>`).join('');
+      descEl.innerHTML = membership.description.split("\\n").map(line => `<p>${line}</p>`).join('');
       subtotalEl.textContent = totalEl.textContent = membership.price.toLocaleString();
-      endpoint = "/purchase-membership";
+      endpoint = "/purchase-membership";  // Use the correct backend endpoint for membership payment
       payload = { membershipId: membership._id };
     } else if (selectedClass) {
       type = "class";
@@ -109,33 +112,35 @@
       durationEl.textContent = `${selectedClass.date} @ ${selectedClass.time}`;
       descEl.innerHTML = `<p>Instructor: ${selectedClass.instructor}</p><p>Venue: ${selectedClass.venue}</p>`;
       subtotalEl.textContent = totalEl.textContent = selectedClass.price.toLocaleString();
-      endpoint = "/book-class";
+      endpoint = "/book-class";  // Endpoint for booking classes (not implemented here)
       payload = { classId: selectedClass._id };
     } else {
       document.getElementById("summaryCard").innerHTML = "<p style='color:red'>No item selected.</p>";
     }
 
-    // Handle payment submission
     document.querySelector('.pay-btn').addEventListener('click', () => {
       if (!type || !endpoint) return alert("No selection to process.");
-
-      // Simulate payment processing
-      alert('Processing payment...');
-
       fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload)  // Payload includes membership or class details
       })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
+          // Clear localStorage once payment is successful
           if (type === "membership") localStorage.removeItem('selectedMembership');
           if (type === "class") localStorage.removeItem('selectedClass');
-          window.location.href = '/user_profile';
+
+          // Redirect to user profile page after successful payment
+          window.location.href = '/user_profile';  // Redirect to profile page
         } else {
-          alert('Something went wrong.');
+          alert('Something went wrong. Please try again.');
         }
+      })
+      .catch(error => {
+        console.error('Error during payment process:', error);
+        alert('An error occurred. Please try again later.');
       });
     });
   </script>

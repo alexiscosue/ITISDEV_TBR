@@ -17,7 +17,7 @@ app.use(session({
 
 app.use(express.static(__dirname));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json()); // To handle JSON payloads
+app.use(express.json()); 
 
 mongoose.connect('mongodb://127.0.0.1:27017/breathingroom', {
   useNewUrlParser: true,
@@ -73,7 +73,6 @@ const userSchema = new mongoose.Schema({
   password: String,
   birthday: Date, 
   contactNumber: String, 
-  preferences: [String],
   membershipPlan: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Membership'
@@ -116,7 +115,7 @@ app.post('/register', [
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { firstname, lastname, email, password, birthday, contact, preferences, classIds } = req.body;
+  const { firstname, lastname, email, password, birthday, contact, classIds } = req.body;
 
   try {
     // Hash the password
@@ -133,7 +132,6 @@ app.post('/register', [
       password: hashedPassword,
       birthday: birthdayDate,
       contactNumber: contact,
-      preferences: preferences ? preferences.split(',') : [], // Split preferences if provided
       classes: classIds || [] // Add the class IDs the user is enrolled in
     });
 
@@ -166,13 +164,13 @@ app.post('/update-profile', async (req, res) => {
     // Update the user's information
     user.firstname = firstName;
     user.lastname = lastName;
-    user.birthday = birthday;  // Update birthday
+    user.birthday = birthday;  
     user.email = email;
     if (password) {
-      const salt = await bcrypt.genSalt(10); // Generate salt
-      user.password = await bcrypt.hash(password, salt); // Update password
+      const salt = await bcrypt.genSalt(10); 
+      user.password = await bcrypt.hash(password, salt); 
     }
-    user.contactNumber = contact;  // Update contact number
+    user.contactNumber = contact;  
 
     // Save updated user
     await user.save();
@@ -214,15 +212,15 @@ app.post('/enroll-in-class', async (req, res) => {
   }
 });
 
-// User Profile
+// User Profile Route
 app.get('/user_profile', async (req, res) => {
   if (!req.session.user) {
     return res.redirect('/login.html');
   }
 
   try {
-    // Get user data, including their enrolled classes
-    const user = await User.findById(req.session.user.id).populate('classes'); // Populate the classes array
+    // Populate the membershipPlan field when fetching user data
+    const user = await User.findById(req.session.user.id).populate('membershipPlan'); // This populates the membershipPlan
 
     const filePath = path.join(__dirname, 'user_profile.html');
     fs.readFile(filePath, 'utf8', (err, html) => {
@@ -230,9 +228,9 @@ app.get('/user_profile', async (req, res) => {
       
       // Replace placeholders with user data
       html = html.replace('Hi, Lexi', `Hi, ${user.firstname}`);
-      html = html.replace('MEMBER-DAY PASS', user.membership || 'MEMBER');
+      html = html.replace('No membership selected', user.membershipPlan ? user.membershipPlan.name : 'No membership selected'); // Show membership name or 'No membership selected'
       
-      // Example: Display user's enrolled classes
+      // Display user's enrolled classes
       let classesHtml = '';
       user.classes.forEach(classItem => {
         classesHtml += `<li>${classItem.title} - ${classItem.date}</li>`;
@@ -280,7 +278,6 @@ app.post('/login', async (req, res) => {
     membership: user.membershipPlan,
     birthday: user.birthday,
     contactNumber: user.contactNumber,
-    preferences: user.preferences
   };
 
   // Redirect to user profile page after successful login
@@ -308,3 +305,50 @@ app.get('/memberships', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
+
+app.post('/purchase-membership', async (req, res) => {
+  const { membershipId } = req.body; // Get the membershipId from the request body
+  const userId = req.session.user.id; // Get the user's ID from the session
+
+  try {
+    // Find the user and membership from the database
+    const user = await User.findById(userId);
+    const membership = await Membership.findById(membershipId);
+
+    if (!membership) {
+      return res.status(400).json({ success: false, message: 'Membership not found' });
+    }
+
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'User not found' });
+    }
+
+    // Simulating a successful payment
+    const newPayment = new Payment({
+      userId: user._id,
+      membershipId: membership._id,
+      amount: membership.price,  // Use the price from the membership model
+      status: 'completed', // Set payment status to 'completed'
+    });
+
+    await newPayment.save(); // Save the payment transaction
+
+    // Update the user's membership plan in the database
+    user.membershipPlan = membership._id;
+    await user.save();
+
+    // Update session with the new membership plan
+    req.session.user.membershipPlan = membership._id; // Update session membership plan
+    
+    console.log("Membership updated for user:", user.membershipPlan); // Debugging line
+
+    res.json({ success: true, message: 'Payment successful' });
+  } catch (error) {
+    console.error('Error processing payment:', error);
+    res.json({ success: false, message: 'Payment failed' });
+  }
+});
+
+
+

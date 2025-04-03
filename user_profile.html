@@ -99,34 +99,34 @@
   <script>
     // Fetch user data and populate the form fields
     fetch('/check-auth')
-      .then(res => res.json())
-      .then(data => {
-        if (data.loggedIn) {
-          const user = data.user;
+    .then(res => res.json())
+    .then(data => {
+      if (data.loggedIn) {
+        const user = data.user;
 
-          // Update username and membership type
-          document.getElementById('username').textContent = user.firstname;
-          document.getElementById('membership-type').textContent = user.membershipPlan ? user.membershipPlan.name : 'No membership selected';
+        // Update username and membership type
+        document.getElementById('username').textContent = user.firstname;
+        document.getElementById('membership-type').textContent = user.membershipPlan ? user.membershipPlan.name : 'No membership selected'; // Show membership name or default message
 
-          // Prefill the form fields with user data
-          document.getElementById('first-name').value = user.firstname;
-          document.getElementById('last-name').value = user.lastname;
-          document.getElementById('email').value = user.email;
+        // Prefill the form fields with user data
+        document.getElementById('first-name').value = user.firstname;
+        document.getElementById('last-name').value = user.lastname;
+        document.getElementById('email').value = user.email;
 
-          const formattedBirthday = user.birthday.split('T')[0];  // Extract yyyy-mm-dd from ISO string
-          document.getElementById('birthday').value = formattedBirthday;
+        const formattedBirthday = user.birthday.split('T')[0];  // Extract yyyy-mm-dd from ISO string
+        document.getElementById('birthday').value = formattedBirthday;
 
-          document.getElementById('contact').value = user.contactNumber;  
+        document.getElementById('contact').value = user.contactNumber;
 
-          // Display the user's booked classes
-          let classesHtml = '';
-          user.classes.forEach(classItem => {
-            classesHtml += `<li>${classItem.title} - ${classItem.date}</li>`;
-          });
-          document.getElementById('user-classes').innerHTML = classesHtml;
-        }
-      })
-      .catch(error => console.error('Error fetching user data:', error));
+        // Display the user's booked classes
+        let classesHtml = '';
+        user.classes.forEach(classItem => {
+          classesHtml += `<li>${classItem.title} - ${classItem.date}</li>`;
+        });
+        document.getElementById('user-classes').innerHTML = classesHtml;
+      }
+    })
+    .catch(error => console.error('Error fetching user data:', error));
   </script>
 </body>
 </html>
