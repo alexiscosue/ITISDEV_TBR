@@ -27,15 +27,10 @@
         <li class="link"><a href="#contact">Contact</a></li>
       </ul>
       <div class="nav__profile">
-        <!-- <a href="login.html">
-          <i class="ri-user-line"></i>
-        </a> -->
         <a id="profileLink">
           <i class="ri-user-line"></i>
         </a>
-
         <script>
-          // Check if user is logged in by pinging the server
           fetch('/check-auth')
             .then(res => res.json())
             .then(data => {
@@ -58,15 +53,17 @@
                 <div class="input__group">
                   <label for="email">Email Address</label>
                   <input type="email" id="email" name="email" required />
+                  <!-- Error message for email if there's an issue -->
+                  
                 </div>
                 <div class="input__group">
                   <label for="password">Password</label>
                   <div class="password-wrapper">
                     <input type="password" id="password" name="password" required />
-                    <div id="password-error" class="error-bubble" style="display: none;"></div>
+                    <div id="password-error" class="error-bubble" style="display:none;"></div>
                   </div>
                 </div>
-                             
+                <div class="error-bubble" id="email-error" style="display:none;"></div>     
                 <button type="submit" class="btn">Login</button>
                 <p class="register__link">Don't have an account? <a href="register.html">Sign up</a></p>
               </form>
@@ -76,5 +73,17 @@
             </div>
           </div>
       </section>
+
+      <script>
+        // Display error message for login failure
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorMessage = urlParams.get('error');
+        
+        if (errorMessage) {
+          const errorDiv = document.getElementById('email-error');
+          errorDiv.textContent = errorMessage; // Display error message
+          errorDiv.style.display = 'block'; // Make it visible
+        }
+      </script>
     </body>
-  </html>
+</html>

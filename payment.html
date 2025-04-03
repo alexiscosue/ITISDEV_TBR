@@ -22,29 +22,48 @@
       <li class="link"><a href="index.html#posts">Blog</a></li>
       <li class="link"><a href="#contact">Contact</a></li>
     </ul>
+    <div class="nav__profile">
+        <span id="userGreeting" style="font-size: 1rem; color: var(--text-dark); margin-right: 10px;"></span>
+        <a id="profileLink"><i class="ri-user-line"></i></a>
+        <script>
+          fetch('/check-auth')
+            .then(res => res.json())
+            .then(data => {
+              const link = document.getElementById('profileLink');
+              const greeting = document.getElementById('userGreeting');
+              if (data.loggedIn) {
+                link.href = '/user_profile';
+                greeting.textContent = `Hi, ${data.user.firstname}`;
+              } else {
+                link.href = '/login.html';
+                greeting.textContent = ``;
+              }
+            });
+        </script>
+      </div>
   </nav>
 
   <section class="payment-container">
-    <!-- Membership Summary Card -->
+    <!-- Summary Card -->
     <div class="class-summary" id="summaryCard">
-      <h3>Membership Summary</h3>
+      <h3 id="summaryTitle">Summary</h3>
       <p><strong>Name:</strong> <span id="summaryName"></span></p>
-      <p><strong>Duration:</strong> <span id="summaryDuration"></span></p>
+      <p><strong>Duration/Time:</strong> <span id="summaryDuration"></span></p>
       <p><strong>Description:</strong></p>
       <div id="summaryDescription"></div>
       <p class="subtotal">Subtotal: ₱<span id="summarySubtotal"></span></p>
       <p>Total: <span class="total-price">₱<span id="summaryTotal"></span></span></p>
     </div>
 
-    <!-- Payment Form Card -->
+    <!-- Payment Form -->
     <div class="payment-box">
       <div class="payment-methods">
         <button class="pay-method apple-pay">
-          <img src="assets/apple-logo.png" alt="Apple Pay" width="24">Pay
-        </button>
-        <button class="pay-method google-pay">
-            <img src="assets/google-logo.png" alt="Google Pay" width="24">Pay
-        </button>
+            <img src="assets/apple-logo.png" alt="Apple Pay" width="24">Pay
+          </button>
+          <button class="pay-method google-pay">
+              <img src="assets/google-logo.png" alt="Google Pay" width="24">Pay
+          </button>
       </div>
       <h3>Bank Card</h3>
       <input type="text" placeholder="Card Number*" />
@@ -55,35 +74,64 @@
       </div>
       <label><input type="checkbox" /> Save card details for future use</label>
       <button class="pay-btn">Pay Now</button>
-      <button class="cancel-btn" onclick="window.location.href='membership.html'">Cancel Payment</button>
+      <button class="cancel-btn" onclick="window.location.href='index.html'">Cancel Payment</button>
     </div>
   </section>
 
   <script>
     const membership = JSON.parse(localStorage.getItem('selectedMembership'));
+    const selectedClass = JSON.parse(localStorage.getItem('selectedClass'));
+
+    const summaryTitle = document.getElementById('summaryTitle');
+    const nameEl = document.getElementById('summaryName');
+    const durationEl = document.getElementById('summaryDuration');
+    const descEl = document.getElementById('summaryDescription');
+    const subtotalEl = document.getElementById('summarySubtotal');
+    const totalEl = document.getElementById('summaryTotal');
+
+    let type = "";
+    let payload = {};
+    let endpoint = "";
 
     if (membership) {
-      document.getElementById('summaryName').textContent = membership.name;
-      document.getElementById('summaryDuration').textContent = membership.duration;
-      document.getElementById('summarySubtotal').textContent = membership.price.toLocaleString();
-      document.getElementById('summaryTotal').textContent = membership.price.toLocaleString();
-      document.getElementById('summaryDescription').innerHTML =
-        membership.description.split('\\n').map(line => `<p>${line}</p>`).join('');
+      type = "membership";
+      summaryTitle.textContent = "Membership Summary";
+      nameEl.textContent = membership.name;
+      durationEl.textContent = membership.duration;
+      descEl.innerHTML = membership.description.split("\n").map(line => `<p>${line}</p>`).join('');
+      subtotalEl.textContent = totalEl.textContent = membership.price.toLocaleString();
+      endpoint = "/purchase-membership";
+      payload = { membershipId: membership._id };
+    } else if (selectedClass) {
+      type = "class";
+      summaryTitle.textContent = "Class Summary";
+      nameEl.textContent = selectedClass.title;
+      durationEl.textContent = `${selectedClass.date} @ ${selectedClass.time}`;
+      descEl.innerHTML = `<p>Instructor: ${selectedClass.instructor}</p><p>Venue: ${selectedClass.venue}</p>`;
+      subtotalEl.textContent = totalEl.textContent = selectedClass.price.toLocaleString();
+      endpoint = "/book-class";
+      payload = { classId: selectedClass._id };
     } else {
-      document.getElementById('summaryCard').innerHTML = '<p style="color:red">No membership selected.</p>';
+      document.getElementById("summaryCard").innerHTML = "<p style='color:red'>No item selected.</p>";
     }
 
+    // Handle payment submission
     document.querySelector('.pay-btn').addEventListener('click', () => {
-      if (!membership) return alert("No membership selected.");
-      fetch('/purchase-membership', {
+      if (!type || !endpoint) return alert("No selection to process.");
+
+      // Simulate payment processing
+      alert('Processing payment...');
+
+      fetch(endpoint, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ membershipId: membership._id })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          localStorage.removeItem('selectedMembership');
+          if (type === "membership") localStorage.removeItem('selectedMembership');
+          if (type === "class") localStorage.removeItem('selectedClass');
           window.location.href = '/user_profile';
         } else {
           alert('Something went wrong.');

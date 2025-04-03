@@ -1,39 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
-    <script src="https://unpkg.com/scrollreveal"></script>
-    <link rel="icon" type="image/png" href="assets/logo.png">
-    <title>Login</title>
-  </head>
-  <body>
-    <nav>
-      <div class="nav__logo">
-        <img src="assets/logo.png" alt="logo" />
-        <span>Breathing Room PH</span>
-      </div>
-      <ul class="nav__links">
-        <li class="link"><a href="index.html">Home</a></li>
-        <li class="link"><a href="classes.html">Classes</a></li>
-        <li class="link"><a href="membership.html">Membership</a></li>
-        <li class="link"><a href="index.html#stories">About</a></li>
-        <li class="link"><a href="index.html#posts">Blog</a></li>
-        <li class="link"><a href="#contact">Contact</a></li>
-      </ul>
-      <div class="nav__profile">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://unpkg.com/scrollreveal"></script>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <title>User Profile</title>
+</head>
+<body>
+  <nav>
+    <div class="nav__logo">
+      <img src="assets/logo.png" alt="logo" />
+      <span>Breathing Room PH</span>
+    </div>
+    <ul class="nav__links">
+      <li class="link"><a href="index.html">Home</a></li>
+      <li class="link"><a href="classes.html">Classes</a></li>
+      <li class="link"><a href="membership.html">Membership</a></li>
+      <li class="link"><a href="index.html#stories">About</a></li>
+      <li class="link"><a href="index.html#posts">Blog</a></li>
+      <li class="link"><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav__profile">
         <span id="userGreeting" style="font-size: 1rem; color: var(--text-dark); margin-right: 10px;"></span>
-        <a id="profileLink">
-          <i class="ri-user-line"></i>
-        </a>
-        
+        <a id="profileLink"><i class="ri-user-line"></i></a>
         <script>
-          // Check if user is logged in by pinging the server
           fetch('/check-auth')
             .then(res => res.json())
             .then(data => {
@@ -48,43 +41,92 @@
               }
             });
         </script>
-        
       </div>
-    </nav>   
-    <section class="login__section">
-        <div class="section__container header__container">
-            <div class="header__content">
-              <h1>Hi, Lexi</h1>
-              <h2>Membership: MEMBER-DAY PASS</h2>
-                <div class="input__group">
-                  <label for="email">Booked Classes</label>
-                  <ul class="class__list">
-                    <li>
-                      <span>Vinyasa Yoga - March 25, 10:00 AM</span>
-                      <button class="cancel__btn">Cancel</button>
-                    </li>
-                    <li>
-                      <span>Hatha Yoga - March 27, 5:00 PM</span>
-                      <button class="cancel__btn">Cancel</button>
-                    </li>
-                    <li>
-                      <span>Ashtanga Yoga - March 30, 7:00 AM</span>
-                      <button class="cancel__btn">Cancel</button>
-                    </li>
-                  </ul>
-                </div>
-                <button type="button" class="logout__btn" onclick="logoutUser()">Logout</button>
-            </div>
-            <div class="why__image">
-              <img src="assets/why.jpg" alt="header" />
-            </div>
-          </div>
-      </section>
+  </nav>
 
-      <script>
-        function logoutUser() {
-          window.location.href = "/logout";
+  <section class="user__profile">
+    <div class="section__container user__profile-container">
+      <div class="header__content">
+        <h1>Hi, <span id="username"></span></h1>
+        <h2>Membership: <span id="membership-type">No membership selected</span></h2>
+      </div>
+      <form id="profile-form" action="/update-profile" method="POST">
+        <div class="input__group-row">
+          <div class="input__group">
+            <label for="first-name">First Name</label>
+            <input type="text" id="first-name" name="firstName" required />
+          </div>
+          <div class="input__group">
+            <label for="last-name">Last Name</label>
+            <input type="text" id="last-name" name="lastName" required />
+          </div>
+        </div>
+
+        <div class="input__group-row">
+          <div class="input__group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div class="input__group">
+            <label for="birthday">Birthday</label>
+            <input type="date" id="birthday" name="birthday" required class="input__field" />
+          </div>
+        </div>
+
+        <div class="input__group-row">
+          <div class="input__group">
+            <label for="contact">Contact Number</label>
+            <input type="text" id="contact" name="contact" required class="input__field" />
+          </div>
+          <div class="input__group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password"/>
+          </div>
+        </div>
+
+        <button type="submit" class="btn__update">Update Profile</button>
+      </form>
+
+      <div class="booked__classes">
+        <h3>Booked Classes</h3>
+        <ul id="user-classes"></ul>
+      </div>
+
+      <button onclick="window.location.href='/logout'" class="logout-btn">Logout</button>
+    </div>
+  </section>
+
+  <script>
+    // Fetch user data and populate the form fields
+    fetch('/check-auth')
+      .then(res => res.json())
+      .then(data => {
+        if (data.loggedIn) {
+          const user = data.user;
+
+          // Update username and membership type
+          document.getElementById('username').textContent = user.firstname;
+          document.getElementById('membership-type').textContent = user.membershipPlan ? user.membershipPlan.name : 'No membership selected';
+
+          // Prefill the form fields with user data
+          document.getElementById('first-name').value = user.firstname;
+          document.getElementById('last-name').value = user.lastname;
+          document.getElementById('email').value = user.email;
+
+          const formattedBirthday = user.birthday.split('T')[0];  // Extract yyyy-mm-dd from ISO string
+          document.getElementById('birthday').value = formattedBirthday;
+
+          document.getElementById('contact').value = user.contactNumber;  
+
+          // Display the user's booked classes
+          let classesHtml = '';
+          user.classes.forEach(classItem => {
+            classesHtml += `<li>${classItem.title} - ${classItem.date}</li>`;
+          });
+          document.getElementById('user-classes').innerHTML = classesHtml;
         }
-      </script>
-    </body>
-  </html>
+      })
+      .catch(error => console.error('Error fetching user data:', error));
+  </script>
+</body>
+</html>

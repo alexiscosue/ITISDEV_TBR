@@ -74,11 +74,17 @@
           });
       }
 
-      fetch('/api/memberships')
+      fetch('/memberships')  <!-- Updated the URL to match the server's route -->
         .then(res => res.json())
         .then(data => {
           const container = document.getElementById('membershipContent');
-          for (const category in data) {
+          const groupedMemberships = data.reduce((acc, membership) => {
+            acc[membership.category] = acc[membership.category] || [];
+            acc[membership.category].push(membership);
+            return acc;
+          }, {});
+          
+          for (const category in groupedMemberships) {
             const section = document.createElement('div');
             section.style.marginTop = "4rem";
             section.innerHTML = `
@@ -87,7 +93,7 @@
               <div class="membership__grid"></div>
             `;
             const grid = section.querySelector('.membership__grid');
-            data[category].forEach(plan => {
+            groupedMemberships[category].forEach(plan => {
               const card = document.createElement('div');
               card.className = 'membership__card';
               card.innerHTML = `
@@ -95,7 +101,7 @@
                 <h2><sup>₱</sup>${Number(plan.price).toLocaleString()}</h2>
                 <h3>Valid for ${plan.duration}</h3>
                 <h4>ENJOY ALL THE FEATURES</h4>
-                ${plan.description.split('\\n').map(line => `<p>${line}</p>`).join('')}
+                ${plan.description.split('\n').map(line => `<p>${line}</p>`).join('')}
                 <a href="#" class="btn membership__btn" onclick='handleMembershipSelect(${JSON.stringify(plan).replace(/'/g, "&apos;")})'>GET STARTED</a>
               `;
               grid.appendChild(card);

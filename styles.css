@@ -38,6 +38,20 @@
   letter-spacing: 2px;
 }
 
+.btn__update {
+  height: 50px;
+  margin-top: 25px;
+  padding: 1rem 1.5rem;
+  outline: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--white);
+  background-color: var(--primary-color);
+  border-radius: 5rem;
+  cursor: pointer;
+}
+
+
 .btn {
   padding: 1rem 1.5rem;
   outline: none;
@@ -349,7 +363,19 @@ header::before {
 
 .register__form .input__group {
   text-align: left;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
+}
+
+/* Flexbox for row layout */
+.input__group-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.input__group {
+  flex: 1;
+  min-width: 45%; 
 }
 
 .register__form label {
@@ -384,6 +410,23 @@ header::before {
 
 .register__form .login__link a:hover {
   text-decoration: underline;
+}
+
+/* Styles for the error messages */
+.error-bubble {
+  font-size: 14px;
+  color: red;
+  padding: 5px;
+  background-color: #f8d7da; /* light red */
+  border: 1px solid #f5c6cb; /* border color */
+  border-radius: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  display: none; /* Hidden by default, shown when error occurs */
+}
+
+.error-bubble.visible {
+  display: block; /* This class will make the error visible */
 }
 
 
@@ -741,8 +784,32 @@ header::before {
   transform: scale(1.05);
 }
 
+input, select {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  box-sizing: border-box; /* Ensures padding does not affect width */
+}
+
+select {
+  appearance: none;
+  background-color: white;
+  cursor: pointer;
+}
+
+select:focus {
+  border-color: #007BFF;
+  outline: none;
+}
+
 /* Payment Form */
-input[type="text"] {
+input[type="email"], 
+input[type="text"], 
+input[type="password"],
+input[type="date"] {
   width: 100%;
   padding: 12px;
   margin: 10px 0;
