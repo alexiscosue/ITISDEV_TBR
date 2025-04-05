@@ -16,7 +16,7 @@
     <nav>
       <div class="nav__logo">
         <img src="assets/logo.png" alt="logo" />
-        <span>Breathing Room PH</span>
+        <span class="link"><a href="index.html">Breathing Room PH</a></span>
       </div>
       <ul class="nav__links">
         <li class="link"><a href="index.html">Home</a></li>
@@ -65,89 +65,30 @@
     <main class="schedule-container">
         <div class="schedule-header">
             <button class="nav-arrow" id="prev-week">&lt;</button>
-            <h2 id="week-range">Sun 3/23 - Sat 3/29</h2>
+            <h2 id="week-range">March 30, 2025 to April 5, 2025</h2>
             <button class="nav-arrow" id="next-week">&gt;</button>
         </div>
 
         <div class="date-picker">
-            <div class="date" data-date="23">Sun <span>23</span></div>
-            <div class="date" data-date="24">Mon <span>24</span></div>
-            <div class="date active" data-date="25">Tue <span>25</span></div>
-            <div class="date" data-date="26">Wed <span>26</span></div>
-            <div class="date" data-date="27">Thu <span>27</span></div>
-            <div class="date" data-date="28">Fri <span>28</span></div>
-            <div class="date" data-date="29">Sat <span>29</span></div>
+            <div class="date" data-date="0330">Mar 30 - Sun</div>
+            <div class="date" data-date="0331">Mar 31 - Mon</div>
+            <div class="date" data-date="0401">Apr 1 - Tue</div>
+            <div class="date active" data-date="0402">Apr 2 - Wed</div>
+            <div class="date" data-date="0403">Apr 3 - Thu</div>
+            <div class="date" data-date="0404">Apr 4 - Fri</div>
+            <div class="date" data-date="0405">Apr 5 - Sat</div>
         </div>
 
-        <div class="class-list">
-            <div class="class-card">
-                <div class="class-info">
-                    <h3>Ashtanga</h3>
-                    <p class="class-time"><i class="ri-time-line"></i> 6:30 AM - 7:30 AM</p>
-                    <p class="class-location"><i class="ri-map-pin-line"></i> Yoga Room</p>
-                    <p class="class-instructor"><i class="ri-user-line"></i> Ricci Salgado</p>
-                </div>
-                <button class="book-btn"><a href="payment.html">Book Now</a></button>
-            </div>
-
-            <div class="class-card">
-                <div class="class-info">
-                    <h3>Goddess Flow</h3>
-                    <p class="class-time"><i class="ri-time-line"></i> 10:00 AM - 11:00 AM</p>
-                    <p class="class-location"><i class="ri-map-pin-line"></i> Studio A</p>
-                    <p class="class-instructor"><i class="ri-user-line"></i> Jamie Ledesma</p>
-                </div>
-                <button class="book-btn"><a href="payment.html">Book Now</a></button>
-            </div>
+        <div class="class-list" id="class-list">
+            <!-- Class cards will be populated by JavaScript -->
         </div>
     </main>
 
+    <!-- Class Descriptions Section -->
     <h2 class="section-title">OUR CLASSES</h2>
 
-    <div class="classes-container">
-        <div class="class-category">
-            <button class="accordion">ASHTANGA</button>
-            <div class="panel">
-                <p>Ashtanga is a specific sequence of poses linking breath and movement. It is a practice combining strength, flexibility, and stamina and may involve hands-on adjustments and guidance from the teacher. It is open to all levels of practitioners.</p>
-            </div>
-
-            <button class="accordion">DEEP STRETCH</button>
-            <div class="panel">
-                <p>Experience the bliss of total relaxation and flexibility enhancement in our Deep Stretch Yoga class. This session is thoughtfully designed to cater to all levels of yogis, whether you’re new to yoga or an experienced practitioner. We begin with a gentle warm-up to soothe the mind and prepare the body for the main event.</p>
-            </div>
-
-            <button class="accordion">LONG SLOW AND DEEP</button>
-            <div class="panel">
-                <p>A slow-paced class aimed at holding poses for an extended time to enhance flexibility and mindfulness.</p>
-            </div>
-            
-            <button class="accordion">POLE FITNESS</button>
-            <div class="panel">
-                <p>A strength-based workout incorporating dance and acrobatics on a pole.</p>
-            </div>
-        </div>
-
-        <div class="class-category">
-            <button class="accordion">BARRE</button>
-            <div class="panel">
-                <p>A ballet-inspired workout focusing on small, controlled movements and core stability.</p>
-            </div>
-
-            <button class="accordion">GODDESS FLOW</button>
-            <div class="panel">
-                <p>A feminine-inspired yoga class blending movement and breathwork.</p>
-            </div>
-
-            <button class="accordion">MOBILITY FLOW</button>
-            <div class="panel">
-                <p>A class designed to improve flexibility, joint mobility, and range of motion.</p>
-            </div>
-
-            <button class="accordion">POP PILATES</button>
-            <div class="panel">
-                <p>A fun, high-energy Pilates workout set to music.</p>
-            </div>
-        </div>
+    <div class="classes-container" id="classes-container">
+        <!-- The accordion will be dynamically populated here -->
     </div>
 
     <footer class="footer" id="contact">
@@ -171,19 +112,202 @@
     </footer>
 
     <script>
-      document.querySelectorAll(".accordion").forEach((accordion) => {
-    accordion.addEventListener("click", function () {
-        this.classList.toggle("active");
-        let panel = this.nextElementSibling;
-        if (panel.style.display === "block") {
-            panel.style.display = "none";
-        } else {
-            panel.style.display = "block";
+      // Function to format date as "Month Day, Year"
+      function formatLongDate(date) {
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                      'July', 'August', 'September', 'October', 'November', 'December'];
+        const month = months[date.getMonth()];
+        return `${month} ${date.getDate()}, ${date.getFullYear()}`;
+      }
+
+      // Function to format date as "MMM D - DDD" (e.g., "Apr 2 - Wed")
+      function formatShortMonthDay(date) {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const month = months[date.getMonth()];
+        const dayName = days[date.getDay()];
+        return `${month} ${date.getDate()} - ${dayName}`;
+      }
+
+      // Function to format date as MMDD (e.g., "0402" for April 2)
+      function formatDateMMDD(date) {
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return month + day;
+      }
+
+      // Function to load classes from server
+      async function loadClasses() {
+        try {
+          const response = await fetch('/api/classes');
+          const classes = await response.json();
+          
+          // Get the selected date from the active date picker element
+          const activeDateElement = document.querySelector('.date.active');
+          const selectedDateCode = activeDateElement ? activeDateElement.getAttribute('data-date') : '0402'; // Default to April 2
+          
+          // Extract month and day from the date code
+          const month = parseInt(selectedDateCode.substring(0, 2)) - 1; // JS months are 0-based
+          const day = parseInt(selectedDateCode.substring(2, 4));
+          const year = 2025; // Using the known year
+          
+          // Create a date object for the selected date
+          const selectedDate = new Date(year, month, day);
+          
+          // Filter classes for the selected date
+          const selectedDateClasses = classes.filter(cls => {
+            const classDate = new Date(cls.date);
+            return classDate.getFullYear() === selectedDate.getFullYear() && 
+                   classDate.getMonth() === selectedDate.getMonth() && 
+                   classDate.getDate() === selectedDate.getDate();
+          });
+          
+          // Update the schedule section
+          updateSchedule(selectedDateClasses, selectedDate);
+        } catch (error) {
+          console.error('Error loading classes:', error);
         }
-    });
-});
+      }
 
+      // Function to update the schedule section
+      function updateSchedule(classes, selectedDate) {
+        const classList = document.getElementById('class-list');
+        
+        // Clear existing content
+        classList.innerHTML = '';
+        
+        // Display classes for selected date
+        if (classes.length > 0) {
+          // Sort classes by time
+          classes.sort((a, b) => {
+            return a.time.localeCompare(b.time);
+          });
+          
+          classes.forEach(cls => {
+            const classCard = document.createElement('div');
+            classCard.className = 'class-card';
+            classCard.innerHTML = `
+              <div class="class-info">
+                <h3>${cls.title}</h3>
+                <p class="class-price"><i class="ri-money-peso-circle-line"></i> ₱${cls.price || 700}</p>
+                <p class="class-time"><i class="ri-time-line"></i> ${cls.time}</p>
+                <p class="class-location"><i class="ri-map-pin-line"></i> ${cls.venue}</p>
+                <p class="class-instructor"><i class="ri-user-line"></i> ${cls.instructor}</p>
+              </div>
+              <button class="book-btn" data-class='${JSON.stringify(cls)}'>Book Now</button>
+            `;
+            classList.appendChild(classCard);
+          });
+
+          // Add event listeners to all book buttons
+          document.querySelectorAll('.book-btn').forEach(button => {
+            button.addEventListener('click', function() {
+              const classData = JSON.parse(this.getAttribute('data-class'));
+              localStorage.setItem('selectedClass', JSON.stringify(classData));
+              window.location.href = 'payment.html';
+            });
+          });
+        } else {
+          classList.innerHTML = '<p>No classes scheduled for this day.</p>';
+        }
+        
+        // Set up current week range (March 30 - April 5, 2025)
+        const startDate = new Date(2025, 2, 30); // March 30
+        const endDate = new Date(2025, 3, 5);    // April 5
+        document.getElementById('week-range').textContent = 
+          `${formatLongDate(startDate)} to ${formatLongDate(endDate)}`;
+      }
+
+      // Function to load class descriptions from the server
+      async function loadClassDescriptions() {
+        try {
+          const response = await fetch('/api/class-descriptions');
+          const classes = await response.json();
+          
+          // Sort classes alphabetically by title
+          classes.sort((a, b) => a.title.localeCompare(b.title));
+          
+          updateClassAccordion(classes);
+        } catch (error) {
+          console.error('Error loading class descriptions:', error);
+        }
+      }
+
+      // Function to update the accordion with class descriptions
+      function updateClassAccordion(classes) {
+        const container = document.getElementById('classes-container');
+        
+        // Clear existing content
+        container.innerHTML = '';
+        
+        // Split classes into two columns
+        const half = Math.ceil(classes.length / 2);
+        const firstHalf = classes.slice(0, half);
+        const secondHalf = classes.slice(half);
+        
+        // Create first column
+        const firstCol = document.createElement('div');
+        firstCol.className = 'class-category';
+        firstHalf.forEach(cls => {
+          firstCol.innerHTML += `
+            <button class="accordion">${cls.title}</button>
+            <div class="panel">
+              <p>${cls.description || 'No description available.'}</p>
+            </div>
+          `;
+        });
+        container.appendChild(firstCol);
+        
+        // Create second column
+        const secondCol = document.createElement('div');
+        secondCol.className = 'class-category';
+        secondHalf.forEach(cls => {
+          secondCol.innerHTML += `
+            <button class="accordion">${cls.title}</button>
+            <div class="panel">
+              <p>${cls.description || 'No description available.'}</p>
+            </div>
+          `;
+        });
+        container.appendChild(secondCol);
+        
+        // Add accordion functionality
+        document.querySelectorAll(".accordion").forEach((accordion) => {
+          accordion.addEventListener("click", function () {
+            this.classList.toggle("active");
+            let panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+              panel.style.display = "none";
+            } else {
+              panel.style.display = "block";
+            }
+          });
+        });
+      }
+
+      // Add event listeners for date picker
+      function setupDatePicker() {
+        const datePicker = document.querySelectorAll('.date');
+        datePicker.forEach(date => {
+          date.addEventListener('click', function() {
+            // Remove active class from all dates
+            document.querySelectorAll('.date').forEach(d => d.classList.remove('active'));
+            
+            // Add active class to clicked date
+            this.classList.add('active');
+            
+            // Reload classes for the selected date
+            loadClasses();
+          });
+        });
+      }
+
+      // Load classes and class descriptions when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        loadClasses();
+        loadClassDescriptions();
+        setupDatePicker();
+      });
     </script>
-</body>
+  </body>
 </html>
-

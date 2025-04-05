@@ -16,7 +16,7 @@
     <nav>
       <div class="nav__logo">
         <img src="assets/logo.png" alt="logo" />
-        <span>Breathing Room PH</span>
+        <span class="link"><a href="index.html">Breathing Room PH</a></span>
       </div>
       <ul class="nav__links">
         <li class="link"><a href="index.html">Home</a></li>
@@ -27,15 +27,10 @@
         <li class="link"><a href="#contact">Contact</a></li>
       </ul>
       <div class="nav__profile">
-        <!-- <a href="login.html">
-          <i class="ri-user-line"></i>
-        </a> -->
         <a id="profileLink">
           <i class="ri-user-line"></i>
         </a>
-
         <script>
-          // Check if user is logged in by pinging the server
           fetch('/check-auth')
             .then(res => res.json())
             .then(data => {
@@ -55,7 +50,7 @@
           <h1>Register</h1>
           <h2>Join us and start your journey today.</h2>
 
-          <form action="/register" method="POST" class="register__form">
+          <form action="/register" method="POST" class="register__form" id="registerForm">
             <div class="input__group">
               <label for="first-name">First Name</label>
               <input type="text" id="first-name" name="firstname" required />
@@ -71,7 +66,7 @@
             <div class="input__group-row">
               <div class="input__group">
                 <label for="birthday">Birthday</label>
-                <input type="date" id="birthday" name="birthday" required />
+                <input type="date" id="birthday" name="birthday" required max="2013-12-31" />
               </div>
               <div class="input__group">
                 <label for="contact">Contact Number</label>
@@ -86,6 +81,12 @@
               <label for="confirm-password">Confirm Password</label>
               <input type="password" id="confirm-password" name="confirm-password" required />
             </div>
+
+            <!-- Error container for duplicate email -->
+            <div class="error-bubble" id="email-error" style="display:none;"></div>
+            <div class="error-bubble" id="password-error" style="display:none;"></div>
+            <div class="error-bubble" id="contact-error" style="display:none;"></div>
+
             <button type="submit" class="btn">Sign Up</button>
             <p class="login__link">Already have an account? <a href="login.html">Login</a></p>
 
@@ -96,5 +97,93 @@
         </div>
       </div>
     </section>
+
+    <script>
+      // Form submission handler
+      document.getElementById('registerForm').addEventListener('submit', async function (e) {
+        e.preventDefault(); // Always prevent default first
+        
+        // Clear previous error messages
+        document.getElementById('password-error').style.display = 'none';
+        document.getElementById('contact-error').style.display = 'none';
+        document.getElementById('email-error').style.display = 'none';
+    
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const contact = document.getElementById('contact').value;
+        const email = document.getElementById('email').value;
+    
+        let valid = true;
+    
+        // Password validation
+        if (password !== confirmPassword) {
+          document.getElementById('password-error').textContent = "Passwords do not match!";
+          document.getElementById('password-error').style.display = 'block';
+          valid = false;
+        }
+    
+        if (password.length < 6) {
+          document.getElementById('password-error').textContent = "Password must be at least 6 characters long.";
+          document.getElementById('password-error').style.display = 'block';
+          valid = false;
+        }
+    
+        // Contact number validation (exactly 11 digits)
+        if (contact.length !== 11 || isNaN(contact)) {
+          document.getElementById('contact-error').textContent = "Contact number must be exactly 11 digits.";
+          document.getElementById('contact-error').style.display = 'block';
+          valid = false;
+        }
+    
+        // Email validation (check if it is valid format)
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        if (!emailRegex.test(email)) {
+          document.getElementById('email-error').textContent = "Please enter a valid email address.";
+          document.getElementById('email-error').style.display = 'block';
+          valid = false;
+        }
+    
+        // If all validations pass, check for duplicate email
+        if (valid) {
+          try {
+            const response = await fetch('/check-email', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ email })
+            });
+            
+            const data = await response.json();
+            
+            if (data.errors && data.errors.includes('Email is already registered.')) {
+              document.getElementById('email-error').textContent = "Email is already registered.";
+              document.getElementById('email-error').style.display = 'block';
+            } else {
+              // If no duplicate email, submit the form
+              this.submit();
+            }
+          } catch (error) {
+            console.error('Error checking email:', error);
+            alert('An error occurred while checking your email. Please try again.');
+          }
+        }
+      });
+    
+      // Display any server-side errors from query parameters
+      window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        
+        if (error) {
+          if (error.includes('Email is already registered')) {
+            document.getElementById('email-error').textContent = error;
+            document.getElementById('email-error').style.display = 'block';
+          } else {
+            alert(error);
+          }
+        }
+      });
+    </script>
   </body>
 </html>

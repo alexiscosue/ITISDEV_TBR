@@ -1,0 +1,74 @@
+[
+  {
+    "title": "Ashtanga Vinyasa Yoga",
+    "instructor": "Ricci Salgado",
+    "date": ["2025-03-30T00:00:00.000Z", "2025-04-03T00:00:00.000Z"],
+    "time": "6:30 AM - 7:30 AM",
+    "venue": "Yoga Room",
+    "description": "Ashtanga Vinyasa Yoga is a specific sequence of poses linking breath and movement. It is a practice combining strength, flexibility, and stamina and may involve hands-on adjustments and guidance from the teacher. It is open to all levels of practitioners.",
+    "price": 700
+  },
+  {
+    "title": "Goddess Flow",
+    "instructor": "Jamie Ledesma",
+    "date": ["2025-03-31T00:00:00.000Z", "2025-04-05T00:00:00.000Z"],
+    "time": "10:00 AM - 11:00 AM",
+    "venue": "Studio A",
+    "description": "A feminine-inspired yoga class blending movement and breathwork.",
+    "price": 550
+  },
+  {
+    "title": "Deep Stretch",
+    "instructor": "Maria Santos",
+    "date": ["2025-03-30T00:00:00.000Z", "2025-04-04T00:00:00.000Z"],
+    "time": "5:00 PM - 6:00 PM",
+    "venue": "Yoga Room",
+    "description": "Experience the bliss of total relaxation and flexibility enhancement in our Deep Stretch Yoga class. This session is thoughtfully designed to cater to all levels of yogis, whether you're new to yoga or an experienced practitioner.",
+    "price": 600
+  },
+  {
+    "title": "Long Slow and Deep",
+    "instructor": "John Doe",
+    "date": ["2025-04-01T00:00:00.000Z", "2025-04-05T00:00:00.000Z"],
+    "time": "7:00 AM - 8:00 AM",
+    "venue": "Studio B",
+    "description": "A slow-paced class aimed at holding poses for an extended time to enhance flexibility and mindfulness.",
+    "price": 500
+  },
+  {
+    "title": "Pole Fitness",
+    "instructor": "Sarah Johnson",
+    "date": ["2025-04-02T00:00:00.000Z", "2025-04-05T00:00:00.000Z"],
+    "time": "6:00 PM - 7:00 PM",
+    "venue": "Pole Studio",
+    "description": "A strength-based workout incorporating dance and acrobatics on a pole.",
+    "price": 850
+  },
+  {
+    "title": "Barre",
+    "instructor": "Emily Wilson",
+    "date": ["2025-03-31T00:00:00.000Z", "2025-04-04T00:00:00.000Z"],
+    "time": "9:00 AM - 10:00 AM",
+    "venue": "Studio A",
+    "description": "A ballet-inspired workout focusing on small, controlled movements and core stability.",
+    "price": 750
+  },
+  {
+    "title": "Mobility Flow",
+    "instructor": "Michael Brown",
+    "date": ["2025-04-01T00:00:00.000Z", "2025-04-03T00:00:00.000Z"],
+    "time": "4:00 PM - 5:00 PM",
+    "venue": "Yoga Room",
+    "description": "A class designed to improve flexibility, joint mobility, and range of motion.",
+    "price": 600
+  },
+  {
+    "title": "Pop Pilates",
+    "instructor": "Jessica Lee",
+    "date": ["2025-03-30T00:00:00.000Z", "2025-04-02T00:00:00.000Z"],
+    "time": "6:30 PM - 7:30 PM",
+    "venue": "Studio B",
+    "description": "A fun, high-energy Pilates workout set to music.",
+    "price": 500
+  }
+]

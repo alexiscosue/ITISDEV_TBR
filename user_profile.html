@@ -13,7 +13,7 @@
   <nav>
     <div class="nav__logo">
       <img src="assets/logo.png" alt="logo" />
-      <span>Breathing Room PH</span>
+      <span class="link"><a href="index.html">Breathing Room PH</a></span>
     </div>
     <ul class="nav__links">
       <li class="link"><a href="index.html">Home</a></li>
@@ -24,109 +24,406 @@
       <li class="link"><a href="#contact">Contact</a></li>
     </ul>
     <div class="nav__profile">
-        <span id="userGreeting" style="font-size: 1rem; color: var(--text-dark); margin-right: 10px;"></span>
-        <a id="profileLink"><i class="ri-user-line"></i></a>
-        <script>
-          fetch('/check-auth')
-            .then(res => res.json())
-            .then(data => {
-              const link = document.getElementById('profileLink');
-              const greeting = document.getElementById('userGreeting');
-              if (data.loggedIn) {
-                link.href = '/user_profile';
-                greeting.textContent = `Hi, ${data.user.firstname}`;
-              } else {
-                link.href = '/login.html';
-                greeting.textContent = ``;
-              }
-            });
-        </script>
-      </div>
+      <span id="userGreeting" style="font-size: 1rem; color: var(--text-dark); margin-right: 10px;"></span>
+      <a id="profileLink"><i class="ri-user-line"></i></a>
+      <script>
+        fetch('/check-auth')
+          .then(res => res.json())
+          .then(data => {
+            const link = document.getElementById('profileLink');
+            const greeting = document.getElementById('userGreeting');
+            if (data.loggedIn) {
+              link.href = '/user_profile';
+              greeting.textContent = `Hi, ${data.user.firstname}`;
+            } else {
+              link.href = '/login.html';
+              greeting.textContent = ``;
+            }
+          });
+      </script>
+    </div>
   </nav>
 
   <section class="user__profile">
-    <div class="section__container user__profile-container">
-      <div class="header__content">
+    <div class="user__profile-container">
+      <div class="profile__header">
         <h1>Hi, <span id="username"></span></h1>
-        <h2>Membership: <span id="membership-type">No membership selected</span></h2>
-      </div>
-      <form id="profile-form" action="/update-profile" method="POST">
-        <div class="input__group-row">
-          <div class="input__group">
-            <label for="first-name">First Name</label>
-            <input type="text" id="first-name" name="firstName" required />
-          </div>
-          <div class="input__group">
-            <label for="last-name">Last Name</label>
-            <input type="text" id="last-name" name="lastName" required />
-          </div>
-        </div>
-
-        <div class="input__group-row">
-          <div class="input__group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required />
-          </div>
-          <div class="input__group">
-            <label for="birthday">Birthday</label>
-            <input type="date" id="birthday" name="birthday" required class="input__field" />
-          </div>
-        </div>
-
-        <div class="input__group-row">
-          <div class="input__group">
-            <label for="contact">Contact Number</label>
-            <input type="text" id="contact" name="contact" required class="input__field" />
-          </div>
-          <div class="input__group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password"/>
-          </div>
-        </div>
-
-        <button type="submit" class="btn__update">Update Profile</button>
-      </form>
-
-      <div class="booked__classes">
-        <h3>Booked Classes</h3>
-        <ul id="user-classes"></ul>
+        <h2>Welcome to your Breathing Room profile</h2>
       </div>
 
-      <button onclick="window.location.href='/logout'" class="logout-btn">Logout</button>
+      <div class="profile__card membership-status">
+        <h3>Your Membership</h3>
+        <div class="membership-details">
+          <div class="membership-info">
+            <p><strong>Status:</strong> <span id="membership-type">No membership selected</span></p>
+            <p id="membership-description">You don't have an active membership yet</p>
+          </div>
+          <div class="membership-actions">
+            <button id="cancelMembershipBtn" class="btn__update" style="display: none;" onclick="openCancelPopup()">Cancel Membership</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile__card">
+        <form id="profile-form" action="/update-profile" method="POST">
+          <h3>Your User Profile</h3>
+          
+          <div class="input__group-row">
+            <div class="input__group">
+              <label for="first-name">First Name</label>
+              <input type="text" id="first-name" name="firstName" required />
+            </div>
+            <div class="input__group">
+              <label for="last-name">Last Name</label>
+              <input type="text" id="last-name" name="lastName" required />
+            </div>
+          </div>
+
+          <div class="input__group-row">
+            <div class="input__group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required />
+              <div class="error-bubble" id="email-error"></div>
+            </div>
+            <div class="input__group">
+              <label for="birthday">Birthday</label>
+              <input type="date" id="birthday" name="birthday" required max="2013-12-31" />
+            </div>
+          </div>
+
+          <div class="input__group-row">
+            <div class="input__group">
+              <label for="contact">Contact Number</label>
+              <input type="text" id="contact" name="contact" required />
+              <div class="error-bubble" id="contact-error"></div>
+            </div>
+            <div class="input__group">
+              <label for="password">Password (leave blank to keep current)</label>
+              <input type="password" id="password" name="password" />
+              <div class="error-bubble" id="password-error"></div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn__update">Update Profile</button>
+        </form>
+      </div>
+
+      <div class="profile__card booked-classes">
+        <h3>Your Booked Classes</h3>
+        <div class="bookings-container">
+          <table class="bookings-table">
+            <thead>
+              <tr>
+                <th>Class Name</th>
+                <th>Class Date</th>
+                <th>Class Time</th>
+                <th>Booking Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="user-classes">
+              <!-- Will be populated by JavaScript -->
+            </tbody>
+          </table>
+          <div id="no-bookings" class="no-bookings" style="display: none;">
+            No classes booked yet
+          </div>
+        </div>
+      </div>
+      <button onclick="window.location.href='/logout'" class="logout__btn">Logout</button>
     </div>
   </section>
 
+  <!-- Cancel Membership Popup -->
+  <div id="cancelMembershipPopup" class="popup-overlay">
+    <div class="popup-content">
+      <button class="close-popup" onclick="closeCancelPopup()">&times;</button>
+      <h3>Cancel Your Membership</h3>
+      <p>Are you sure you want to cancel your current membership plan? This action cannot be undone.</p>
+      <div class="popup-buttons">
+        <button class="popup-btn popup-btn-cancel" onclick="closeCancelPopup()">Keep My Plan</button>
+        <button class="popup-btn popup-btn-danger" id="confirmCancelBtn">Confirm Cancellation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel Class Popup -->
+  <div id="cancelClassPopup" class="popup-overlay">
+    <div class="popup-content">
+      <button class="close-popup" onclick="closeCancelClassPopup()">&times;</button>
+      <h3>Cancel Your Class Booking</h3>
+      <p>Are you sure you want to cancel this class booking? This action cannot be undone.</p>
+      <div class="popup-buttons">
+        <button class="popup-btn popup-btn-cancel" onclick="closeCancelClassPopup()">Keep My Booking</button>
+        <button class="popup-btn popup-btn-danger" id="confirmClassCancelBtn">Confirm Cancellation</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // Fetch user data and populate the form fields
-    fetch('/check-auth')
-    .then(res => res.json())
-    .then(data => {
-      if (data.loggedIn) {
-        const user = data.user;
+    let originalEmail = "";
+    let currentBookingToCancel = null;
 
-        // Update username and membership type
-        document.getElementById('username').textContent = user.firstname;
-        document.getElementById('membership-type').textContent = user.membershipPlan ? user.membershipPlan.name : 'No membership selected'; // Show membership name or default message
+    // Load user data with forced refresh
+    fetch('/check-auth', { cache: 'no-store' })
+      .then(res => res.json())
+      .then(data => {
+        if (data.loggedIn) {
+          const user = data.user;
 
-        // Prefill the form fields with user data
-        document.getElementById('first-name').value = user.firstname;
-        document.getElementById('last-name').value = user.lastname;
-        document.getElementById('email').value = user.email;
+          // Display username and membership
+          document.getElementById('username').textContent = user.firstname;
+          const membershipElement = document.getElementById('membership-type');
+          const descriptionElement = document.getElementById('membership-description');
+          
+          membershipElement.textContent = user.membership ? user.membership.name : 'No membership selected';
+          descriptionElement.innerHTML = user.membership ? 
+            (user.membership.description || 'Active membership') : 
+            'You can select a membership plan on our<span class="link"><a href="membership.html">membership page</a></span>';
 
-        const formattedBirthday = user.birthday.split('T')[0];  // Extract yyyy-mm-dd from ISO string
-        document.getElementById('birthday').value = formattedBirthday;
+          // Show/hide cancel membership button
+          const cancelBtn = document.getElementById('cancelMembershipBtn');
+          cancelBtn.style.display = user.membership ? 'block' : 'none';
 
-        document.getElementById('contact').value = user.contactNumber;
+          // Fill form fields
+          document.getElementById('first-name').value = user.firstname || '';
+          document.getElementById('last-name').value = user.lastname || '';
+          document.getElementById('email').value = user.email || '';
+          document.getElementById('contact').value = user.contactNumber || '';
+          originalEmail = user.email || '';
 
-        // Display the user's booked classes
-        let classesHtml = '';
-        user.classes.forEach(classItem => {
-          classesHtml += `<li>${classItem.title} - ${classItem.date}</li>`;
+          // Set birthday from session data
+          if (user.birthday) {
+            const birthdayDate = typeof user.birthday === 'string' 
+              ? new Date(user.birthday) 
+              : user.birthday;
+            const formattedBirthday = birthdayDate.toISOString().split('T')[0];
+            document.getElementById('birthday').value = formattedBirthday;
+          }
+
+          // Load bookings
+          loadUserBookings();
+        } else {
+          window.location.href = '/login.html';
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+        alert('Error loading profile data. Please try again.');
+      });
+
+    function loadUserBookings() {
+      fetch('/api/user-bookings')
+        .then(res => res.json())
+        .then(bookings => {
+          const bookingsTable = document.getElementById('user-classes');
+          const noBookingsMsg = document.getElementById('no-bookings');
+          
+          if (bookings.length === 0) {
+            bookingsTable.innerHTML = '';
+            noBookingsMsg.style.display = 'block';
+            return;
+          }
+          
+          noBookingsMsg.style.display = 'none';
+          bookingsTable.innerHTML = bookings.map(booking => `
+            <tr>
+              <td>${booking.class.title}</td>
+              <td>${new Date(booking.classDate).toLocaleDateString()}</td>
+              <td>${booking.class.time}</td>
+              <td>${new Date(booking.bookingDate).toLocaleDateString()}</td>
+              <td>
+                <button class="btn-cancel" onclick="openCancelClassPopup('${booking._id}')">Cancel</button>
+              </td>
+            </tr>
+          `).join('');
+        })
+        .catch(error => {
+          console.error('Error loading bookings:', error);
+          document.getElementById('no-bookings').style.display = 'block';
+          document.getElementById('no-bookings').textContent = 'Error loading bookings';
         });
-        document.getElementById('user-classes').innerHTML = classesHtml;
+    }
+
+    function openCancelPopup() {
+      document.getElementById('cancelMembershipPopup').classList.add('active');
+    }
+
+    function closeCancelPopup() {
+      document.getElementById('cancelMembershipPopup').classList.remove('active');
+    }
+
+    // Add the missing function to open the cancel class popup
+    function openCancelClassPopup(bookingId) {
+      currentBookingToCancel = bookingId;
+      document.getElementById('cancelClassPopup').classList.add('active');
+    }
+
+    // Add the missing function to close the cancel class popup
+    function closeCancelClassPopup() {
+      document.getElementById('cancelClassPopup').classList.remove('active');
+      currentBookingToCancel = null;
+    }
+
+    // Add the missing function to handle class cancellation
+    async function cancelClassBooking() {
+  if (!currentBookingToCancel) {
+    closeCancelClassPopup();
+    return;
+  }
+
+  try {
+    const response = await fetch('/cancel-class-booking', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ bookingId: currentBookingToCancel })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      // Redirect to confirmation page with all needed parameters
+      const params = new URLSearchParams();
+      params.append('type', 'class-cancellation');
+      params.append('id', data.paymentId);
+      
+      // Add class details as URL parameters as fallback
+      if (data.className) params.append('className', data.className);
+      if (data.classDate) params.append('classDate', data.classDate);
+      if (data.classTime) params.append('time', data.classTime);
+      if (data.instructor) params.append('instructor', data.instructor);
+      
+      window.location.href = `/confirmation.html?${params.toString()}`;
+    } else {
+      alert('Error: ' + (data.message || 'Failed to cancel class booking'));
+      closeCancelClassPopup();
+    }
+  } catch (error) {
+    console.error('Error details:', error);
+    alert('An error occurred. Please try again later.');
+    closeCancelClassPopup();
+  }
+}
+    async function cancelMembership() {
+      try {
+        const response = await fetch('/cancel-membership', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.paymentId) {
+          // Redirect to confirmation page with cancellation details
+          window.location.href = `/confirmation.html?type=cancellation&id=${data.paymentId}`;
+        } else {
+          alert('Error: ' + (data.message || 'Failed to cancel membership'));
+          closeCancelPopup();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again later.');
+        closeCancelPopup();
       }
-    })
-    .catch(error => console.error('Error fetching user data:', error));
+    }
+
+    // Add event listeners when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Make sure these elements exist before attaching event listeners
+      const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+      const confirmClassCancelBtn = document.getElementById('confirmClassCancelBtn');
+      
+      if (confirmCancelBtn) {
+        confirmCancelBtn.addEventListener('click', cancelMembership);
+      }
+      
+      if (confirmClassCancelBtn) {
+        confirmClassCancelBtn.addEventListener('click', cancelClassBooking);
+      }
+    });
+
+    // Form validation
+    document.getElementById('profile-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+  
+      // Clear previous errors
+      document.getElementById('password-error').style.display = 'none';
+      document.getElementById('contact-error').style.display = 'none';
+      document.getElementById('email-error').style.display = 'none';
+  
+      const password = document.getElementById('password').value.trim();
+      const contact = document.getElementById('contact').value.trim();
+      const email = document.getElementById('email').value.trim();
+      let isValid = true;
+  
+      // Password validation
+      if (password && password.length < 6) {
+        document.getElementById('password-error').textContent = 'Password must be at least 6 characters';
+        document.getElementById('password-error').style.display = 'block';
+        isValid = false;
+      }
+  
+      // Contact validation
+      if (!/^\d{11}$/.test(contact)) {
+        document.getElementById('contact-error').textContent = 'Contact number must be exactly 11 digits';
+        document.getElementById('contact-error').style.display = 'block';
+        isValid = false;
+      }
+  
+      // Email validation
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+      if (!emailRegex.test(email)) {
+        document.getElementById('email-error').textContent = 'Please enter a valid email address';
+        document.getElementById('email-error').style.display = 'block';
+        isValid = false;
+      } else if (email !== originalEmail) {
+        // Check for duplicate email if changed
+        try {
+          const response = await fetch('/check-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email })
+          });
+  
+          const data = await response.json();
+  
+          if (data.errors && data.errors.includes('Email is already registered.')) {
+            document.getElementById('email-error').textContent = 'Email is already registered';
+            document.getElementById('email-error').style.display = 'block';
+            isValid = false;
+          }
+        } catch (error) {
+          console.error('Error checking email:', error);
+          alert('An error occurred while checking your email. Please try again.');
+          isValid = false;
+        }
+      }
+  
+      if (isValid) {
+        this.submit();
+      }
+    });
+  
+    // Server-side error display from URL
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const error = urlParams.get('error');
+  
+      if (error) {
+        if (error.includes('Email is already registered')) {
+          document.getElementById('email-error').textContent = error;
+          document.getElementById('email-error').style.display = 'block';
+        } else {
+          alert(error);
+        }
+      }
+    });
   </script>
 </body>
 </html>

@@ -13,7 +13,7 @@
     <nav>
       <div class="nav__logo">
         <img src="assets/logo.png" alt="logo" />
-        <span>Breathing Room PH</span>
+        <span class="link"><a href="index.html">Breathing Room PH</a></span>
       </div>
       <ul class="nav__links">
         <li class="link"><a href="index.html">Home</a></li>
@@ -59,22 +59,136 @@
       </div>
     </section>
 
+    <!-- Membership Popup -->
+    <div id="membershipPopup" class="popup-overlay">
+      <div class="popup-content">
+        <button class="close-popup" onclick="closePopup()">&times;</button>
+        <h3>You Already Have A Membership</h3>
+        <p>You currently have an active membership plan. Would you like to cancel your current plan?</p>
+        <div class="popup-buttons">
+          <button class="popup-btn popup-btn-cancel" onclick="closePopup()">Keep Current Plan</button>
+          <button class="popup-btn popup-btn-primary" id="switchPlanBtn">Cancel Membership</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cancel Membership Popup -->
+    <div id="cancelMembershipPopup" class="popup-overlay">
+      <div class="popup-content">
+        <button class="close-popup" onclick="closeCancelPopup()">&times;</button>
+        <h3>Cancel Your Membership</h3>
+        <p>Are you sure you want to cancel your current membership plan? This action cannot be undone.</p>
+        <div class="popup-buttons">
+          <button class="popup-btn popup-btn-cancel" onclick="closeCancelPopup()">Keep My Plan</button>
+          <button class="popup-btn popup-btn-danger" id="confirmCancelBtn">Confirm Cancellation</button>
+        </div>
+      </div>
+    </div>
+
     <script>
+      let userData = null;
+      let selectedPlan = null;
+    
+      // Popup Functions
+      function openPopup(plan) {
+        selectedPlan = plan;
+        document.getElementById('membershipPopup').classList.add('active');
+      }
+    
+      function closePopup() {
+        document.getElementById('membershipPopup').classList.remove('active');
+      }
+    
+      function openCancelPopup() {
+        document.getElementById('cancelMembershipPopup').classList.add('active');
+      }
+    
+      function closeCancelPopup() {
+        document.getElementById('cancelMembershipPopup').classList.remove('active');
+      }
+    
       function handleMembershipSelect(plan) {
-        fetch('/check-auth')
-          .then(res => res.json())
-          .then(data => {
-            if (!data.loggedIn) {
-              alert('Please log in to continue.');
-              window.location.href = '/login.html';
-            } else {
-              localStorage.setItem('selectedMembership', JSON.stringify(plan));
-              window.location.href = 'payment.html';
-            }
-          });
+  selectedPlan = plan;
+  fetch('/check-auth', { cache: 'no-store' })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.loggedIn) {
+        alert('Please log in to continue.');
+        window.location.href = '/login.html';
+        return;
       }
 
-      fetch('/memberships')  <!-- Updated the URL to match the server's route -->
+      // If user has membership, show switch plan popup
+      if (data.user.membership) {
+        openPopup(plan);
+      } else {
+        // No existing membership - redirect to payment page
+        localStorage.setItem('selectedMembership', JSON.stringify(plan));
+        window.location.href = '/payment.html';
+      }
+    })
+    .catch(error => {
+      console.error('Error checking auth:', error);
+      alert('Error checking membership status. Please try again.');
+    });
+}
+    
+      function purchaseMembership(plan) {
+        fetch('/purchase-membership', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ membershipId: plan._id })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            window.location.href = data.redirect; // Redirect to confirmation page
+          } else {
+            alert('Error: ' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred. Please try again later.');
+        });
+      }
+    
+      function cancelMembership() {
+        fetch('/cancel-membership', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Redirect to confirmation page with cancellation status
+            window.location.href = `/confirmation.html?type=cancellation&id=${data.paymentId}`;
+          } else {
+            alert('Error: ' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred. Please try again later.');
+        });
+      }
+    
+      // Add event listeners when the DOM is loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('switchPlanBtn').addEventListener('click', function() {
+          closePopup();
+          openCancelPopup();
+        });
+        
+        document.getElementById('confirmCancelBtn').addEventListener('click', cancelMembership);
+      });
+    
+      // Fetch and display memberships
+      fetch('/memberships')
         .then(res => res.json())
         .then(data => {
           const container = document.getElementById('membershipContent');
@@ -102,7 +216,7 @@
                 <h3>Valid for ${plan.duration}</h3>
                 <h4>ENJOY ALL THE FEATURES</h4>
                 ${plan.description.split('\n').map(line => `<p>${line}</p>`).join('')}
-                <a href="#" class="btn membership__btn" onclick='handleMembershipSelect(${JSON.stringify(plan).replace(/'/g, "&apos;")})'>GET STARTED</a>
+                <button class="btn membership__btn" onclick='handleMembershipSelect(${JSON.stringify(plan).replace(/'/g, "&apos;")})'>GET STARTED</button>
               `;
               grid.appendChild(card);
             });
@@ -130,6 +244,5 @@
         Copyright © 2025 The Breathing Room PH. All rights reserved.
       </div>
     </footer>
-
   </body>
 </html>

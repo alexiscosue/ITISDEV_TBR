@@ -16,7 +16,7 @@
     <nav>
       <div class="nav__logo">
         <img src="assets/logo.png" alt="logo" />
-        <span>Breathing Room PH</span>
+        <span class="link"><a href="index.html">Breathing Room PH</a></span>
       </div>
       <ul class="nav__links">
         <li class="link"><a href="index.html">Home</a></li>
@@ -27,62 +27,568 @@
         <li class="link"><a href="#contact">Contact</a></li>
       </ul>
       <div class="nav__profile">
-        <!-- <a href="login.html">
-          <i class="ri-user-line"></i>
-        </a> -->
+        <span id="userGreeting" style="font-size: 1rem; color: var(--text-dark); margin-right: 10px;"></span>
         <a id="profileLink">
           <i class="ri-user-line"></i>
         </a>
-
         <script>
-          // Check if user is logged in by pinging the server
           fetch('/check-auth')
             .then(res => res.json())
             .then(data => {
               const link = document.getElementById('profileLink');
+              const greeting = document.getElementById('userGreeting');
               if (data.loggedIn) {
                 link.href = '/user_profile';
+                greeting.textContent = `Hi, ${data.user.firstname}`;
               } else {
                 link.href = '/login.html';
+                greeting.textContent = ``;
               }
+            })
+            .catch(err => {
+              console.error('Auth check failed:', err);
             });
         </script>
       </div>
     </nav>  
 
-     <!-- Added this div to wrap the confirmation container -->
-  <div class="main-content">
-    <div class="confirmation-container">
-      <div class="checkmark-icon">
-          ✅ <!-- Replace with an image if needed -->
-      </div>
+    <div class="main-content">
+      <div class="confirmation-container">
+        <div class="checkmark-icon" id="statusIcon">
+          <!-- Will be filled by JS -->
+        </div>
 
-      <h2 class="confirmation-title">Payment completed</h2>
-      
-      <div class="order-number">
-          <span>📄 Transaction ID <strong>#246258</strong></span>
-      </div>
+        <h2 class="confirmation-title" id="confirmationTitle">Processing...</h2>
+        
+        <div class="order-number">
+          <span id="transactionId">📄 Transaction ID <strong>#246258</strong></span>
+        </div>
 
-      <div class="transaction-details">
-          <div class="detail-item">
-              <span>Date</span>
-              <span>07/10/2024</span>
-          </div>
-          <div class="detail-item">
-              <span>Payment Method</span>
-              <span>Google Pay</span>
-          </div>
-          <div class="detail-item">
-              <span>Total</span>
-              <span>$480</span>
-          </div>
-          <div class="detail-item">
-              <span>Email</span>
-              <span>kc@cactus.co</span>
-          </div>
-      </div>
+        <div class="transaction-details" id="transactionDetails">
+          <!-- Will be filled by JS -->
+          <div class="loading">Loading transaction details...</div>
+        </div>
 
-      <button class="invoice-btn" onclick="window.location.href='index.html'">Back to Home</button>
+        <button class="invoice-btn" onclick="window.location.href='index.html'">Back to Home</button>
+      </div>
     </div>
-  </div>
-</body>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const paymentId = urlParams.get('id');
+        const type = urlParams.get('type');
+        const classId = urlParams.get('classId'); // Add classId parameter
+
+        console.log('Payment ID:', paymentId);
+        console.log('Type:', type);
+        console.log('Class ID:', classId);
+
+        // For class cancellations, we might need both the payment ID and class ID
+        if (!paymentId && type !== 'class-cancellation') {
+          showError("Missing payment ID parameter");
+          return;
+        }
+        
+        // Special handling for class cancellations
+        if (type === 'class-cancellation') {
+          // Check if we have either payment ID or class ID
+          if (!paymentId && !classId) {
+            showError("Missing both payment ID and class ID parameters");
+            return;
+          }
+          
+          fetchCancellationDetails(paymentId, classId);
+        } else {
+          // Regular payment flow
+          fetchPaymentDetails(paymentId, type);
+        }
+
+        // Replace the fetchCancellationDetails function with this:
+function fetchCancellationDetails(paymentId, classId) {
+  fetch(`/api/payment/${paymentId}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Payment not found (Status: ${response.status})`);
+      }
+      return response.json();
+    })
+    .then(payment => {
+      console.log('Payment data:', payment);
+      
+      // If we have class data in the payment, use that
+      if (payment.class) {
+        displayPaymentDetails(payment, 'class-cancellation');
+      } 
+      // Otherwise try to get class details from the classId
+      else if (classId) {
+        fetch(`/api/classes/${classId}`)
+          .then(res => res.json())
+          .then(classData => {
+            payment.class = classData;
+            displayPaymentDetails(payment, 'class-cancellation');
+          })
+          .catch(error => {
+            console.error('Error fetching class:', error);
+            showError("Could not load class details");
+          });
+      } else {
+        showError("Missing class information in cancellation record");
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching payment:', error);
+      showError("Could not load cancellation details");
+    });
+}
+        
+        function tryConstructCancellationFromParams() {
+          // This is a fallback when API calls fail - construct a basic cancellation object
+          // from URL parameters if possible
+          console.log('Attempting to construct cancellation from URL params');
+          
+          const className = urlParams.get('className');
+          const classDate = urlParams.get('classDate');
+          const instructor = urlParams.get('instructor');
+          const time = urlParams.get('time');
+          
+          if (className) {
+            const cancellation = {
+              status: 'cancelled',
+              class: {
+                title: className || 'Unknown Class',
+                date: classDate || new Date().toISOString(),
+                instructor: instructor || 'Not specified',
+                time: time || 'Not specified'
+              }
+            };
+            
+            displayCancellationDetails(cancellation);
+          } else {
+            showError("Could not load cancellation details. Missing class information.");
+          }
+        }
+        
+        function displayCancellationDetails(cancellation) {
+          // Set status icon for cancellation
+          const icon = document.getElementById('statusIcon');
+          const title = document.getElementById('confirmationTitle');
+          
+          icon.innerHTML = '❌';
+          icon.style.backgroundColor = '#f8d7da';
+          title.textContent = 'Class Cancelled';
+          
+          // Format date - use current date if not provided
+          let formattedDate = 'Date not available';
+          try {
+            const currentDate = new Date();
+            formattedDate = currentDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            });
+          } catch (e) {
+            console.error('Date formatting error:', e);
+          }
+          
+          // Set transaction ID
+          const shortId = (paymentId || classId || '000000').substring(0, 6);
+          document.getElementById('transactionId').innerHTML = 
+            `📄 Transaction ID <strong>#${shortId}</strong>`;
+          
+          // Generate cancellation HTML
+          const detailsHtml = buildClassCancellationDetailsHtml(cancellation, formattedDate);
+          document.getElementById('transactionDetails').innerHTML = detailsHtml;
+        }
+
+        function fetchPaymentDetails(paymentId, type) {
+          const endpoint = `/api/payment/${paymentId}`;
+          console.log('Fetching from:', endpoint);
+          
+          fetch(endpoint)
+            .then(response => {
+              console.log('Response status:', response.status);
+              if (!response.ok) {
+                if (response.status === 404) {
+                  throw new Error('Payment not found. Please check the payment ID.');
+                } else {
+                  throw new Error(`Server error: ${response.status}`);
+                }
+              }
+              return response.json();
+            })
+            .then(payment => {
+              console.log('Payment data:', payment);
+              displayPaymentDetails(payment, type);
+            })
+            .catch(error => {
+              console.error('Error fetching payment:', error);
+              
+              // Try alternative endpoint if first one fails
+              const altEndpoint = `/api/payments/${paymentId}`;
+              console.log('Trying alternative endpoint:', altEndpoint);
+              
+              fetch(altEndpoint)
+                .then(response => {
+                  if (!response.ok) throw new Error('Payment not found on alternative endpoint');
+                  return response.json();
+                })
+                .then(payment => {
+                  console.log('Payment data from alt endpoint:', payment);
+                  displayPaymentDetails(payment, type);
+                })
+                .catch(altError => {
+                  console.error('Error with alternative endpoint:', altError);
+                  
+                  // If it's a class booking or cancellation, try class-specific endpoints
+                  if (type === 'class' || type === 'class-cancellation') {
+                    tryClassEndpoints(paymentId, type);
+                  } else {
+                    showError(`Failed to load transaction details: ${error.message}`);
+                  }
+                });
+            });
+        }
+        
+        function tryClassEndpoints(paymentId, type) {
+          const endpoint = type === 'class' ? 
+                          `/api/class-bookings/${paymentId}` : 
+                          `/api/class-cancellations/${paymentId}`;
+          
+          console.log('Trying class endpoint:', endpoint);
+          
+          fetch(endpoint)
+            .then(response => {
+              if (!response.ok) throw new Error(`Class ${type} not found`);
+              return response.json();
+            })
+            .then(classData => {
+              console.log(`Class ${type} data:`, classData);
+              displayPaymentDetails(classData, type);
+            })
+            .catch(error => {
+              console.error(`Error with class ${type} endpoint:`, error);
+              showError(`Failed to load ${type} details: ${error.message}`);
+            });
+        }
+
+        function displayPaymentDetails(payment, type) {
+          // Handle potentially missing data
+          if (!payment || typeof payment !== 'object') {
+            showError("Invalid payment data received");
+            return;
+          }
+
+          // Set status icon
+          const icon = document.getElementById('statusIcon');
+          const title = document.getElementById('confirmationTitle');
+          
+          const status = payment.status || 'unknown';
+          
+          if (status === 'completed') {
+            icon.innerHTML = '✅';
+            icon.style.backgroundColor = '#dbf0dc';
+            title.textContent = type === 'class' ? 'Class Booked' : 'Payment Completed';
+          } else if (status === 'cancelled') {
+            icon.innerHTML = '❌';
+            icon.style.backgroundColor = '#f8d7da';
+            title.textContent = type === 'class-cancellation' ? 'Class Cancelled' : 'Membership Cancelled';
+          } else {
+            icon.innerHTML = '❓';
+            icon.style.backgroundColor = '#f0f0f0';
+            title.textContent = 'Transaction Status: ' + status.toUpperCase();
+          }
+
+          // Set transaction ID - handle possible missing _id
+          const paymentId = payment._id || payment.id || 'unknown';
+          let shortId = 'unknown';
+          
+          if (typeof paymentId === 'string') {
+            shortId = paymentId.length > 6 ? paymentId.substring(paymentId.length - 6) : paymentId;
+          } else if (paymentId && paymentId.toString) {
+            shortId = paymentId.toString().substring(paymentId.toString().length - 6);
+          }
+          
+          document.getElementById('transactionId').innerHTML = 
+            `📄 Transaction ID <strong>#${shortId}</strong>`;
+
+          // Format date - handle possible missing date
+          let formattedDate = 'Date not available';
+          if (payment.paymentDate) {
+            try {
+              const paymentDate = new Date(payment.paymentDate);
+              formattedDate = paymentDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              });
+            } catch (e) {
+              console.error('Date formatting error:', e);
+              // Use current date as fallback
+              formattedDate = new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              });
+            }
+          } else {
+            // Use current date as fallback
+            formattedDate = new Date().toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            });
+          }
+
+          // Build details HTML based on type
+          let detailsHtml = '';
+          try {
+            if (type === 'class') {
+              detailsHtml = buildClassDetailsHtml(payment, formattedDate);
+            } else if (type === 'class-cancellation') {
+              detailsHtml = buildClassCancellationDetailsHtml(payment, formattedDate);
+            } else if (type === 'cancellation') {
+              detailsHtml = buildMembershipCancellationDetailsHtml(payment, formattedDate);
+            } else {
+              detailsHtml = buildMembershipDetailsHtml(payment, formattedDate);
+            }
+          } catch (e) {
+            console.error('Error building details HTML:', e);
+            detailsHtml = `
+              <div class="detail-item">
+                <span>Error</span>
+                <span>Error building details: ${e.message}</span>
+              </div>
+            `;
+          }
+            
+          document.getElementById('transactionDetails').innerHTML = detailsHtml;
+        }
+
+        function buildClassCancellationDetailsHtml(payment, formattedDate) {
+          // Safe access to nested properties
+          const classData = payment.class || {};
+          
+          // Format class date with error handling
+          let formattedClassDate = 'Date not specified';
+          if (classData.date) {
+            try {
+              const classDate = new Date(classData.date);
+              formattedClassDate = classDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              });
+            } catch (e) {
+              console.error('Class date formatting error:', e);
+            }
+          }
+
+          return `
+            <div class="detail-item">
+              <span>Date</span>
+              <span>${formattedDate}</span>
+            </div>
+            <div class="detail-item">
+              <span>Cancelled Class</span>
+              <span>${classData.title || payment.className || 'Unknown class'}</span>
+            </div>
+            <div class="detail-item">
+              <span>Class Date</span>
+              <span>${formattedClassDate}</span>
+            </div>
+            <div class="detail-item">
+              <span>Time</span>
+              <span>${classData.time || payment.classTime || 'Not specified'}</span>
+            </div>
+            <div class="detail-item">
+              <span>Instructor</span>
+              <span>${classData.instructor || payment.instructor || 'Not specified'}</span>
+            </div>
+            <div class="detail-item">
+              <span>Status</span>
+              <span style="color: red">CANCELLED</span>
+            </div>
+            <div class="detail-item">
+              <span>Refund Amount</span>
+              <span>₱0.00</span>
+            </div>
+            ${payment.user ? `
+              <div class="detail-item">
+                <span>Email</span>
+                <span>${payment.user.email || 'Not available'}</span>
+              </div>
+            ` : ''}
+          `;
+        }
+
+        function buildClassDetailsHtml(payment, formattedDate) {
+          // Safe access to nested properties
+          const classData = payment.class || {};
+          
+          // Format class date with error handling
+          let formattedClassDate = 'Date not specified';
+          if (classData.date) {
+            try {
+              const classDate = new Date(classData.date);
+              formattedClassDate = classDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              });
+            } catch (e) {
+              console.error('Class date formatting error:', e);
+            }
+          }
+
+          const amount = payment.amount !== undefined ? payment.amount : 
+                         (classData.price !== undefined ? classData.price : 0);
+
+          return `
+            <div class="detail-item">
+              <span>Date</span>
+              <span>${formattedDate}</span>
+            </div>
+            <div class="detail-item">
+              <span>Class Booked</span>
+              <span>${classData.title || 'Unknown class'}</span>
+            </div>
+            <div class="detail-item">
+              <span>Class Date</span>
+              <span>${formattedClassDate}</span>
+            </div>
+            <div class="detail-item">
+              <span>Time</span>
+              <span>${classData.time || 'Not specified'}</span>
+            </div>
+            <div class="detail-item">
+              <span>Instructor</span>
+              <span>${classData.instructor || 'Not specified'}</span>
+            </div>
+            <div class="detail-item">
+              <span>Venue</span>
+              <span>${classData.venue || 'Not specified'}</span>
+            </div>
+            <div class="detail-item">
+              <span>Status</span>
+              <span style="color: green">COMPLETED</span>
+            </div>
+            <div class="detail-item">
+              <span>Total</span>
+              <span>₱${typeof amount === 'number' ? amount.toFixed(2) : '0.00'}</span>
+            </div>
+            ${payment.user ? `
+              <div class="detail-item">
+                <span>Email</span>
+                <span>${payment.user.email || 'Not available'}</span>
+              </div>
+            ` : ''}
+          `;
+        }
+
+        function buildMembershipDetailsHtml(payment, formattedDate) {
+          // Safe access to nested properties
+          const membershipData = payment.membership || {};
+
+          const price = membershipData.price !== undefined ? membershipData.price : 
+                       (payment.amount !== undefined ? payment.amount : 0);
+
+          return `
+            <div class="detail-item">
+              <span>Date</span>
+              <span>${formattedDate}</span>
+            </div>
+            <div class="detail-item">
+              <span>Membership</span>
+              <span>${membershipData.name || 'Unknown membership'}</span>
+            </div>
+            <div class="detail-item">
+              <span>Duration</span>
+              <span>${membershipData.duration || 'Not specified'}</span>
+            </div>
+            <div class="detail-item">
+              <span>Price</span>
+              <span>₱${typeof price === 'number' ? price.toFixed(2) : '0.00'}</span>
+            </div>
+            <div class="detail-item">
+              <span>Status</span>
+              <span style="color: green">COMPLETED</span>
+            </div>
+            <div class="detail-item">
+              <span>Amount Paid</span>
+              <span>₱${typeof payment.amount === 'number' ? payment.amount.toFixed(2) : '0.00'}</span>
+            </div>
+            ${payment.user ? `
+              <div class="detail-item">
+                <span>Email</span>
+                <span>${payment.user.email || 'Not available'}</span>
+              </div>
+            ` : ''}
+          `;
+        }
+
+        function buildMembershipCancellationDetailsHtml(payment, formattedDate) {
+          // Safe access to nested properties
+          const membershipData = payment.membership || {};
+
+          return `
+            <div class="detail-item">
+              <span>Date</span>
+              <span>${formattedDate}</span>
+            </div>
+            <div class="detail-item">
+              <span>Cancelled Membership</span>
+              <span>${membershipData.name || 'Unknown membership'}</span>
+            </div>
+            <div class="detail-item">
+              <span>Duration</span>
+              <span>${membershipData.duration || 'Not specified'}</span>
+            </div>
+            <div class="detail-item">
+              <span>Original Price</span>
+              <span>₱${typeof membershipData.price === 'number' ? membershipData.price.toFixed(2) : '0.00'}</span>
+            </div>
+            <div class="detail-item">
+              <span>Status</span>
+              <span style="color: red">CANCELLED</span>
+            </div>
+            <div class="detail-item">
+              <span>Refund Amount</span>
+              <span>₱0.00</span>
+            </div>
+            ${payment.user ? `
+              <div class="detail-item">
+                <span>Email</span>
+                <span>${payment.user.email || 'Not available'}</span>
+              </div>
+            ` : ''}
+          `;
+        }
+
+        function showError(message) {
+          const icon = document.getElementById('statusIcon');
+          icon.innerHTML = '⚠️';
+          icon.style.backgroundColor = '#fff3cd';
+          
+          document.getElementById('confirmationTitle').textContent = 'Transaction Error';
+          document.getElementById('transactionDetails').innerHTML = `
+            <div class="detail-item">
+              <span>Error</span>
+              <span>${message}</span>
+            </div>
+            <div class="detail-item">
+              <span>Possible Solutions</span>
+              <span>
+                1. Check that the payment ID is correct<br>
+                2. Verify that the backend server is running<br>
+                3. Contact support if the issue persists
+              </span>
+            </div>
+          `;
+        }
+      });
+    </script>
+  </body>
+</html>
